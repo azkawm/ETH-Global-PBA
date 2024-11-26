@@ -3,6 +3,9 @@ pragma solidity ^0.8.0;
 
 contract PublicTransportTracker {
     // Struct to represent a passenger's journey
+
+    IStandardToken token;
+
     struct Journey {
         string entryStation;
         string exitStation;
@@ -44,10 +47,11 @@ contract PublicTransportTracker {
         _;
     }
 
-    constructor(uint256 _rewardPerUnit, string[] memory _stations) {
+    constructor(address tokenAddress, uint256 _rewardPerUnit, string[] memory _stations) {
         owner = msg.sender;
         rewardPerUnit = _rewardPerUnit;
         stations = _stations;
+        token = IStandardToken(tokenAddress);
     }
 
     // Admin functions
@@ -93,6 +97,11 @@ contract PublicTransportTracker {
 
         // Reset journey
         delete journeys[msg.sender];
+    }
+
+    function withdrawCarbonToken(address to, uint256 _amount) external payable{
+        require(wallets[msg.sender].balance >= _amount, "need more funds");
+        token.transferFrom(msg.sender, to, _amount);
     }
 
     // Helper functions
