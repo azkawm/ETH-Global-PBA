@@ -16,6 +16,7 @@ contract PublicTransportTracker {
     struct Wallet {
         string name;
         uint256 balance;
+        uint256 milez;
     }
 
     // Fare per distance unit
@@ -23,6 +24,7 @@ contract PublicTransportTracker {
 
     // Address of the contract owner (admin)
     address public owner;
+    uint256 public milezCap;
 
     // List of valid stations
     //string[] public stations;
@@ -62,6 +64,10 @@ contract PublicTransportTracker {
         rewardPerUnit = newFare;
     }
 
+    function updaterewardCap(uint256 newCap) external onlyOwner {
+        milezCap = newCap;
+    }
+
     // function addStation(string memory station) external onlyOwner {
     //     stations.push(station);
     // }
@@ -88,23 +94,26 @@ contract PublicTransportTracker {
         if (keccak256(abi.encodePacked(exitStation)) == keccak256(abi.encodePacked("Station B")) 
         && keccak256(abi.encodePacked(journey.entryStation)) == keccak256(abi.encodePacked("Station A"))) {
     
-        tokenDistribution(stationB);
+        wallets[msg.sender].milez += stationB;
     
         } else if (keccak256(abi.encodePacked(exitStation)) == keccak256(abi.encodePacked("Station C")) 
            && keccak256(abi.encodePacked(journey.entryStation)) == keccak256(abi.encodePacked("Station A"))) {
     
-        tokenDistribution(stationC);
+        wallets[msg.sender].milez += stationC;
+
         }
 
         emit JourneyCompleted(msg.sender, exitStation, journey.reward);
     }
 
-    function tokenDistribution(uint256 distance) private {
+    function tokenRedeem() external {
         Journey storage journey = journeys[msg.sender];
         require(journey.isCompleted, "Journey not completed");
+        require(wallets[msg.sender].milez >= milezCap, "Insufficient Milez");
         // Refund excess amount
-        uint256 _reward = calculateReward(distance);
-        wallets[msg.sender].balance += _reward;
+        //uint256 _reward = calculateReward(distance);
+        uint256 reward = wallets[msg.sender].milez/milezCap;
+        wallets[msg.sender].balance += reward;
 
         emit FarePaid(msg.sender, journey.reward);
 
