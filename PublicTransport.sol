@@ -25,7 +25,10 @@ contract PublicTransportTracker {
     address public owner;
 
     // List of valid stations
-    string[] public stations;
+    //string[] public stations;
+    uint stationA = 0;
+    uint stationB = 2;
+    uint stationC = 4;
 
     // Mapping of passengers to their journey details
     mapping(address => Journey) public journeys;
@@ -47,10 +50,10 @@ contract PublicTransportTracker {
         _;
     }
 
-    constructor(address tokenAddress, uint256 _rewardPerUnit, string[] memory _stations) {
+    constructor(address tokenAddress, uint256 _rewardPerUnit /*string[] memory _stations*/) {
         owner = msg.sender;
         rewardPerUnit = _rewardPerUnit;
-        stations = _stations;
+        //stations = _stations;
         token = IStandardToken(tokenAddress);
     }
 
@@ -59,9 +62,9 @@ contract PublicTransportTracker {
         rewardPerUnit = newFare;
     }
 
-    function addStation(string memory station) external onlyOwner {
-        stations.push(station);
-    }
+    // function addStation(string memory station) external onlyOwner {
+    //     stations.push(station);
+    // }
 
     // Passenger functions
     function startJourney(string memory entryStation) external journeyNotStarted(msg.sender) {
@@ -82,11 +85,21 @@ contract PublicTransportTracker {
         journey.exitStation = exitStation;
         //journey.reward = calculateReward(distance);
         journey.isCompleted = true;
+        if (keccak256(abi.encodePacked(exitStation)) == keccak256(abi.encodePacked("Station B")) 
+        && keccak256(abi.encodePacked(journey.entryStation)) == keccak256(abi.encodePacked("Station A"))) {
+    
+        tokenDistribution(stationB);
+    
+        } else if (keccak256(abi.encodePacked(exitStation)) == keccak256(abi.encodePacked("Station C")) 
+           && keccak256(abi.encodePacked(journey.entryStation)) == keccak256(abi.encodePacked("Station A"))) {
+    
+        tokenDistribution(stationC);
+        }
 
         emit JourneyCompleted(msg.sender, exitStation, journey.reward);
     }
 
-    function tokenDistribution(uint256 distance) external payable {
+    function tokenDistribution(uint256 distance) private {
         Journey storage journey = journeys[msg.sender];
         require(journey.isCompleted, "Journey not completed");
         // Refund excess amount
@@ -99,9 +112,10 @@ contract PublicTransportTracker {
         delete journeys[msg.sender];
     }
 
-    function withdrawCarbonToken(address to, uint256 _amount) external payable{
+    function withdrawCarbonToken(uint256 _amount) external payable{
         require(wallets[msg.sender].balance >= _amount, "need more funds");
-        token.transferFrom(msg.sender, to, _amount);
+        wallets[msg.sender].balance -= _amount;
+        token.transferFrom(owner, msg.sender, _amount);
     }
 
     // Helper functions
@@ -109,7 +123,7 @@ contract PublicTransportTracker {
         return distance * rewardPerUnit;
     }
 
-    function getStations() external view returns (string[] memory) {
-        return stations;
-    }
+    // function getStations() external view returns (string[] memory) {
+    //     return stations;
+    // }
 }
