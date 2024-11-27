@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "carbonToken.sol";
+import "./carbonToken.sol";
 
-interface IStandardToken {
+interface ICarbonToken {
     // Function to get the decimals of the token
     function decimals() external view returns (uint8);
 

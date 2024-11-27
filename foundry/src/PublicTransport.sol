@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "interfaceToken.sol"
+import "./interfaceToken.sol";
 
 contract PublicTransportTracker {
     // Struct to represent a passenger's journey
 
-    IStandardToken token;
+    ICarbonToken token;
 
     struct Journey {
         string entryStation;
@@ -58,7 +58,7 @@ contract PublicTransportTracker {
         owner = msg.sender;
         rewardPerUnit = _rewardPerUnit;
         //stations = _stations;
-        token = IStandardToken(tokenAddress);
+        token = ICarbonToken(tokenAddress);
     }
 
     // Admin functions
