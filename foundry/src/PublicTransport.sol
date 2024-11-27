@@ -42,6 +42,7 @@ contract PublicTransportTracker {
     event JourneyStarted(address indexed passenger, string entryStation);
     event JourneyCompleted(address indexed passenger, string exitStation, uint256 fare);
     event FarePaid(address indexed passenger, uint256 amount);
+    event Deposit(address indexed sender, uint256 amount);
 
     // Modifiers
     modifier onlyOwner() {
@@ -114,8 +115,10 @@ contract PublicTransportTracker {
         require(wallets[msg.sender].milez >= milezCap, "Insufficient Milez");
         // Refund excess amount
         //uint256 _reward = calculateReward(distance);
+        uint256 milez = wallets[msg.sender].milez;
         uint256 reward = wallets[msg.sender].milez/milezCap;
-        wallets[msg.sender].balance += reward;
+        wallets[msg.sender].milez -= milez;
+        wallets[msg.sender].balance += calculateReward(reward);
 
         emit FarePaid(msg.sender, journey.reward);
 
@@ -123,7 +126,7 @@ contract PublicTransportTracker {
         delete journeys[msg.sender];
     }
 
-    function withdrawCarbonToken(uint256 _amount) external payable{
+    function withdrawCarbonToken(uint256 _amount) external{
         require(wallets[msg.sender].balance >= _amount, "need more funds");
         wallets[msg.sender].balance -= _amount;
         token.transferFrom(owner, msg.sender, _amount);
@@ -132,6 +135,18 @@ contract PublicTransportTracker {
     // Helper functions
     function calculateReward(uint256 distance) public view returns (uint256) {
         return distance * rewardPerUnit;
+    }
+
+    function deposit() public payable {
+        require(msg.value > 0, "Must send some Ether");
+
+        // Emit the Deposit event
+        emit Deposit(msg.sender, msg.value);
+    }
+
+    // Get the total balance of the contract
+    function getContractBalance() public view returns (uint256) {
+        return address(this).balance;
     }
 
     // function getStations() external view returns (string[] memory) {
