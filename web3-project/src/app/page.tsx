@@ -5,6 +5,8 @@ import { IDKitWidget, useIDKit, VerificationLevel } from "@worldcoin/idkit";
 import { client } from "./client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { verify } from "./actions/verify";
+import type { ISuccessResult } from "@worldcoin/idkit";
 
 export default function Home() {
   const router = useRouter();
@@ -44,11 +46,21 @@ export default function Home() {
     handleConnection();
   }, [account, connectionStatus, router]);
 
-  const onSuccess = (result: any) => {
-    console.log("Verification successful:", result);
-    setIsVerified(true); // Tandai user telah terverifikasi
-    alert("Verification successful! You can now access the dashboard.");
-    router.push("/dashboard"); // Redirect ke dashboard setelah verifikasi berhasil
+  const onSuccess = (result: ISuccessResult) => {
+    // This is where you should perform frontend actions once a user has been verified, such as redirecting to a new page
+    window.alert("Successfully verified with World ID! Your nullifier hash is: " + result.nullifier_hash);
+    setIsVerified(true);
+    router.push("/dashboard");
+  };
+
+  const handleProof = async (result: ISuccessResult) => {
+    console.log("Proof received from IDKit, sending to backend:\n", JSON.stringify(result)); // Log the proof from IDKit to the console for visibility
+    const data = await verify(result);
+    if (data.success) {
+      console.log("Successful response from backend:\n", JSON.stringify(data)); // Log the response from our backend for visibility
+    } else {
+      throw new Error(`Verification failed: ${data.detail}`);
+    }
   };
 
   return (
@@ -71,6 +83,7 @@ export default function Home() {
         onSuccess={onSuccess}
         verification_level={VerificationLevel.Device} // Atur level verifikasi
       />
+
       {!isVerified && (
         <button onClick={() => setOpen(true)} className="mt-6 px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600">
           Verify with World ID
