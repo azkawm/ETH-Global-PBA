@@ -1,87 +1,81 @@
 "use client";
-import React from "react";
-import Hero from "./components/Hero";
-import { motion } from "framer-motion";
 
-import { useInView } from "react-intersection-observer";
-import { FaLeaf, FaCoins, FaGlobeAmericas } from "react-icons/fa";
+import { ConnectButton as ThirdwebConnectButton, useConnect, useActiveAccount, useActiveWalletConnectionStatus } from "thirdweb/react";
+import { IDKitWidget, useIDKit, VerificationLevel } from "@worldcoin/idkit";
+import { client } from "./client";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
 export default function Home() {
-  return (
-    <div id="hero" className="text-white ">
-      <Hero />
+  const router = useRouter();
+  const connect = useConnect();
+  const account = useActiveAccount();
+  const connectionStatus = useActiveWalletConnectionStatus();
 
-      {/* Animated Section with Scroll Trigger */}
-      <ScrollAnimatedSection />
+  const { setOpen } = useIDKit(); // Control World ID Widget
+  const [isVerified, setIsVerified] = useState(false); // State untuk verifikasi
+
+  const app_id = process.env.NEXT_PUBLIC_WLD_APP_ID as `app_${string}`;
+  const action = process.env.NEXT_PUBLIC_WLD_ACTION;
+
+  if (!app_id) {
+    throw new Error("app_id is not set in environment variables!");
+  }
+  if (!action) {
+    throw new Error("action is not set in environment variables!");
+  }
+
+  useEffect(() => {
+    const handleConnection = async () => {
+      if (connectionStatus === "connected" && account) {
+        try {
+          console.log("Wallet Connected:", account);
+          localStorage.setItem("walletConnected", "true");
+          localStorage.setItem("walletAddress", String(account));
+
+          // Buka widget World ID setelah koneksi wallet berhasil
+          setOpen(true);
+        } catch (error) {
+          console.error("Connection error:", error);
+        }
+      }
+    };
+
+    handleConnection();
+  }, [account, connectionStatus, router]);
+
+  const onSuccess = (result: any) => {
+    console.log("Verification successful:", result);
+    setIsVerified(true); // Tandai user telah terverifikasi
+    alert("Verification successful! You can now access the dashboard.");
+    router.push("/dashboard"); // Redirect ke dashboard setelah verifikasi berhasil
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen ">
+      <h1 className="text-2xl font-bold mb-6">Welcome! Please Connect Your Wallet</h1>
+      <div className="hidden md:flex items-center space-x-4 text-white px-6 py-2 rounded-xl">
+        <ThirdwebConnectButton
+          client={client}
+          theme="dark"
+          onConnect={(wallet) => {
+            console.log("Connecting wallet...");
+          }}
+        />
+      </div>
+
+      {/* World ID Widget */}
+      <IDKitWidget
+        action={action}
+        app_id={app_id}
+        onSuccess={onSuccess}
+        verification_level={VerificationLevel.Device} // Atur level verifikasi
+      />
+      {!isVerified && (
+        <button onClick={() => setOpen(true)} className="mt-6 px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600">
+          Verify with World ID
+        </button>
+      )}
     </div>
   );
 }
-
-// Scroll Animated Section Component
-const ScrollAnimatedSection: React.FC = () => {
-  const [ref, inView] = useInView({
-    triggerOnce: true, // Animasi hanya terjadi sekali
-    threshold: 0.2, // Animasi dimulai ketika 20% elemen terlihat
-  });
-
-  const features = [
-    {
-      icon: <FaLeaf size={40} className="text-teal-400" />,
-      title: "Track Your Carbon",
-      description: "Easily monitor your daily carbon impact with real-time tracking.",
-    },
-    {
-      icon: <FaCoins size={40} className="text-yellow-400" />,
-      title: "Earn Rewards",
-      description: "Accumulate points for every eco-friendly step you take.",
-    },
-    {
-      icon: <FaGlobeAmericas size={40} className="text-blue-400" />,
-      title: "Make a Difference",
-      description: "Join a growing community driving global environmental change.",
-    },
-  ];
-
-  return (
-    <motion.section ref={ref} className="flex flex-col justify-center items-center  p-10 py-20  text-center text-white" initial={{ opacity: 0, y: 50 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }}>
-      <h2 className="text-3xl font-bold mb-4">Join the Green Movement</h2>
-
-      <p className="text-lg mb-8">Embrace sustainable travel and turn your carbon-saving habits into valuable rewards. Together, we can make a difference.</p>
-      {/* Animated Cards */}
-      <motion.div
-        className="grid grid-cols-1 md:grid-cols-3 gap-8"
-        initial="hidden"
-        animate={inView ? "visible" : "hidden"}
-        variants={{
-          hidden: { opacity: 0, scale: 0.8 },
-          visible: {
-            opacity: 1,
-            scale: 1,
-            transition: {
-              delayChildren: 0.3,
-              staggerChildren: 0.2,
-            },
-          },
-        }}
-      >
-        {features.map((feature, index) => (
-          <motion.div
-            key={index}
-            className="p-8 bg-gray-800 rounded-xl shadow-lg hover:bg-gray-700"
-            variants={{
-              hidden: { opacity: 0, y: 50 },
-              visible: { opacity: 1, y: 0 },
-            }}
-            whileHover={{
-              scale: 1.05,
-              transition: { duration: 0.3 },
-            }}
-          >
-            <div className="flex justify-center mb-4">{feature.icon}</div>
-            <h3 className="text-xl font-bold">{feature.title}</h3>
-            <p className="mt-2">{feature.description}</p>
-          </motion.div>
-        ))}
-      </motion.div>
-    </motion.section>
-  );
-};

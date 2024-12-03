@@ -2,8 +2,10 @@
 import Link from "next/link";
 
 import { ConnectButton as ThirdwebConnectButton } from "thirdweb/react";
-
-import { client } from "../client";
+import { useRouter } from "next/navigation";
+import { useDisconnect, useActiveWalletConnectionStatus, useActiveWallet } from "thirdweb/react";
+import { client } from "../../client";
+import React, { useEffect } from "react";
 
 export default function Header() {
   return (
