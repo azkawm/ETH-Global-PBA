@@ -13,9 +13,8 @@ export default function Home() {
   const connect = useConnect();
   const account = useActiveAccount();
   const connectionStatus = useActiveWalletConnectionStatus();
-
-  const { setOpen } = useIDKit(); // Control World ID Widget
-  const [isVerified, setIsVerified] = useState(false); // State untuk verifikasi
+  const { setOpen } = useIDKit();
+  const [isVerified, setIsVerified] = useState(false);
 
   const app_id = process.env.NEXT_PUBLIC_WLD_APP_ID as `app_${string}`;
   const action = process.env.NEXT_PUBLIC_WLD_ACTION;
@@ -34,8 +33,6 @@ export default function Home() {
           console.log("Wallet Connected:", account);
           localStorage.setItem("walletConnected", "true");
           localStorage.setItem("walletAddress", String(account));
-
-          // Buka widget World ID setelah koneksi wallet berhasil
           setOpen(true);
         } catch (error) {
           console.error("Connection error:", error);
@@ -44,28 +41,27 @@ export default function Home() {
     };
 
     handleConnection();
-  }, [account, connectionStatus, router]);
+  }, [account, connectionStatus, setOpen]);
 
   const onSuccess = (result: ISuccessResult) => {
-    // This is where you should perform frontend actions once a user has been verified, such as redirecting to a new page
     window.alert("Successfully verified with World ID! Your nullifier hash is: " + result.nullifier_hash);
     setIsVerified(true);
     router.push("/dashboard");
   };
 
-  const handleProof = async (result: ISuccessResult) => {
-    console.log("Proof received from IDKit, sending to backend:\n", JSON.stringify(result)); // Log the proof from IDKit to the console for visibility
+  const handleVerify = async (result: ISuccessResult): Promise<void> => {
+    console.log("Proof received from IDKit, sending to backend:", JSON.stringify(result));
     const data = await verify(result);
-    if (data.success) {
-      console.log("Successful response from backend:\n", JSON.stringify(data)); // Log the response from our backend for visibility
-    } else {
+    if (!data.success) {
       throw new Error(`Verification failed: ${data.detail}`);
     }
+    console.log("Successful response from backend:", JSON.stringify(data));
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen ">
+    <div className="flex flex-col items-center justify-center min-h-screen">
       <h1 className="text-2xl font-bold mb-6">Welcome! Please Connect Your Wallet</h1>
+
       <div className="hidden md:flex items-center space-x-4 text-white px-6 py-2 rounded-xl">
         <ThirdwebConnectButton
           client={client}
@@ -76,19 +72,17 @@ export default function Home() {
         />
       </div>
 
-      {/* World ID Widget */}
-      <IDKitWidget
-        action={action}
-        app_id={app_id}
-        onSuccess={onSuccess}
-        verification_level={VerificationLevel.Device} // Atur level verifikasi
-      />
-
-      {!isVerified && (
-        <button onClick={() => setOpen(true)} className="mt-6 px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600">
-          Verify with World ID
-        </button>
-      )}
+      <div className="mt-6">
+        {/* <IDKitWidget app_id={app_id} action={action} onSuccess={onSuccess} handleVerify={handleVerify} verification_level={VerificationLevel.Device}>
+          {({ open }) => (
+            <div>
+              <button onClick={open} className="mt-6 px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600" disabled={isVerified}>
+                {isVerified ? "Verified ✓" : "Verify with World ID"}
+              </button>
+            </div>
+          )}
+        </IDKitWidget> */}
+      </div>
     </div>
   );
 }
