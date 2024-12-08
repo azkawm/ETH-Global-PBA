@@ -8,7 +8,7 @@ contract StorageScript is Script {
     Storage public storage_;
 
     function setUp() public {
-        vm.createSelectFork(vm.rpcUrl("ethereum_sepolia"));
+        vm.createSelectFork(vm.rpcUrl("optimism_sepolia"));
     }
 
     function run() public {

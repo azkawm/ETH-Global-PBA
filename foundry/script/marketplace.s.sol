@@ -8,7 +8,7 @@ contract MrketplaceScript is Script {
     Marketplace public marketplace;
 
     function setUp() public {
-        vm.createSelectFork(vm.rpcUrl("ethereum_sepolia"));
+        vm.createSelectFork(vm.rpcUrl("optimism_sepolia"));
     }
 
     function run() public {
