@@ -5,5 +5,5 @@ libs = ["lib"]
 
 [rpc_endpoints]
 ethereum_sepolia="${CHAIN_RPC_URL}"
-
+optimism_sepolia="${OPSEPOLIA_RPC_URL}"
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

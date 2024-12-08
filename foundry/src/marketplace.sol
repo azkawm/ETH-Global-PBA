@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "./interfaceToken.sol";
 import "./interfaceTransportTracker.sol";
 
-contract MarketPlace {
+contract Marketplace {
     
     ITestLogic private testLogic;
     IStandardToken token;

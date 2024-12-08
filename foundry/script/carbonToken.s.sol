@@ -8,7 +8,7 @@ contract CarbonTokenScript is Script {
     CarbonToken public carbonToken;
 
     function setUp() public {
-        vm.createSelectFork(vm.rpcUrl("ethereum_sepolia"));
+        vm.createSelectFork(vm.rpcUrl("optimism_sepolia"));
     }
 
     function run() public {
