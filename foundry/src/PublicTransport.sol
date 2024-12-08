@@ -2,17 +2,24 @@
 pragma solidity ^0.8.0;
 
 import "./interfaceToken.sol";
+import "./interfaceStorage.sol";
 
 contract PublicTransportTracker {
-    // Struct to represent a passenger's journey
+    IStorage private storage_; // Storage reference
+    IStandardToken token;
 
-    ICarbonToken token;
+    constructor(address tokenAddress, uint256 _rewardPerUnit, address _storageAddress) {
+        owner = msg.sender;
+        rewardPerUnit = _rewardPerUnit;
+        storage_ = IStorage(_storageAddress);
+        token = IStandardToken(tokenAddress);
+    }
 
     struct Journey {
         string entryStation;
         string exitStation;
-        uint256 reward;
         bool isCompleted;
+        bool isOnWay;
     }
 
     struct Wallet {
@@ -29,7 +36,6 @@ contract PublicTransportTracker {
     uint256 public milezCap;
 
     // List of valid stations
-    //string[] public stations;
     uint stationA = 0;
     uint stationB = 2;
     uint stationC = 4;
@@ -51,15 +57,8 @@ contract PublicTransportTracker {
     }
 
     modifier journeyNotStarted(address passenger) {
-        require(!journeys[passenger].isCompleted, "Complete your current journey first");
+        require(!journeys[passenger].isOnWay, "Complete your current journey first");
         _;
-    }
-
-    constructor(address tokenAddress, uint256 _rewardPerUnit /*string[] memory _stations*/) {
-        owner = msg.sender;
-        rewardPerUnit = _rewardPerUnit;
-        //stations = _stations;
-        token = ICarbonToken(tokenAddress);
     }
 
     // Admin functions
@@ -71,18 +70,12 @@ contract PublicTransportTracker {
         milezCap = newCap;
     }
 
-    // function addStation(string memory station) external onlyOwner {
-    //     stations.push(station);
-    // }
-
     // Passenger functions
     function startJourney(string memory entryStation) external journeyNotStarted(msg.sender) {
-        journeys[msg.sender] = Journey({
-            entryStation: entryStation,
-            exitStation: "",
-            reward: 0,
-            isCompleted: false
-        });
+        Journey storage journey = journeys[msg.sender];
+        journey.entryStation = entryStation;
+        journey.isOnWay = true;
+        journey.isOnWay = false;
 
         emit JourneyStarted(msg.sender, entryStation);
     }
@@ -92,43 +85,45 @@ contract PublicTransportTracker {
         require(!journey.isCompleted, "Journey already completed");
 
         journey.exitStation = exitStation;
-        //journey.reward = calculateReward(distance);
         journey.isCompleted = true;
+        journey.isOnWay = false;
         if (keccak256(abi.encodePacked(exitStation)) == keccak256(abi.encodePacked("Station B")) 
         && keccak256(abi.encodePacked(journey.entryStation)) == keccak256(abi.encodePacked("Station A"))) {
     
-        wallets[msg.sender].milez += stationB;
+        //wallets[msg.sender].milez += stationB;
+        storage_.addMilez(msg.sender, stationB);
+        storage_.addDistance(msg.sender, stationB);
+        
     
         } else if (keccak256(abi.encodePacked(exitStation)) == keccak256(abi.encodePacked("Station C")) 
            && keccak256(abi.encodePacked(journey.entryStation)) == keccak256(abi.encodePacked("Station A"))) {
     
-        wallets[msg.sender].milez += stationC;
+        //wallets[msg.sender].milez += stationC;
+        storage_.addMilez(msg.sender, stationC);
+        storage_.addDistance(msg.sender, stationC);
 
         }
 
-        emit JourneyCompleted(msg.sender, exitStation, journey.reward);
+        emit JourneyCompleted(msg.sender, exitStation, stationC);
     }
 
     function tokenRedeem() external {
-        Journey storage journey = journeys[msg.sender];
-        require(journey.isCompleted, "Journey not completed");
-        require(wallets[msg.sender].milez >= milezCap, "Insufficient Milez");
+        require(storage_.getMilez(msg.sender) >= milezCap, "Insufficient Milez");
         // Refund excess amount
-        //uint256 _reward = calculateReward(distance);
-        uint256 milez = wallets[msg.sender].milez;
-        uint256 reward = wallets[msg.sender].milez/milezCap;
-        wallets[msg.sender].milez -= milez;
-        wallets[msg.sender].balance += calculateReward(reward);
+        uint256 milez = storage_.getMilez(msg.sender);
+        uint256 reward = milez/milezCap;
+        storage_.deductMilez(msg.sender, milez);
+        storage_.addBalance(msg.sender, calculateReward(reward));
 
-        emit FarePaid(msg.sender, journey.reward);
+        emit FarePaid(msg.sender, calculateReward(reward));
 
         // Reset journey
         delete journeys[msg.sender];
     }
 
     function withdrawCarbonToken(uint256 _amount) external{
-        require(wallets[msg.sender].balance >= _amount, "need more funds");
-        wallets[msg.sender].balance -= _amount;
+        require(storage_.getBalance(msg.sender) >= _amount, "need more funds");
+        storage_.deductBalance(msg.sender, _amount);
         token.transferFrom(owner, msg.sender, _amount);
     }
 
@@ -149,7 +144,13 @@ contract PublicTransportTracker {
         return address(this).balance;
     }
 
-    // function getStations() external view returns (string[] memory) {
-    //     return stations;
-    // }
+    function testDeductBalance(address user, uint amount) external {
+        storage_.deductBalance(user, amount); 
+        
+        //require (storage_.getBalance(msg.sender) == 10); // Ensure that the balance of `msg.sender` is 10
+    }
+
+    function testGetBalance(address user) public view returns (uint){
+        return storage_.getBalance(user);
+    }
 }

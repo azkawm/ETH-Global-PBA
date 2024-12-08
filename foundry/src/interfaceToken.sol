@@ -3,7 +3,9 @@ pragma solidity ^0.8.19;
 
 import "./carbonToken.sol";
 
-interface ICarbonToken {
+interface IStandardToken {
+
+    function approve(address spender, uint amount) external returns (bool);
     // Function to get the decimals of the token
     function decimals() external view returns (uint8);
 
@@ -15,6 +17,7 @@ interface ICarbonToken {
 
     function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
 
+    function transfer(address recipient, uint256 amount) external returns (bool);
     // Pause token transfers
     function pause() external;
 
