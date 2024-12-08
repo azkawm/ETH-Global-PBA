@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 import {Script, console} from "forge-std/Script.sol";
 import {Marketplace} from "../src/marketplace.sol";
 
-contract MrketplaceScript is Script {
+contract MarketplaceScript is Script {
     Marketplace public marketplace;
 
     function setUp() public {
@@ -14,7 +14,7 @@ contract MrketplaceScript is Script {
     function run() public {
         uint256 privateKey = vm.envUint("DEPLOYER_WALLET_PRIVATE_KEY");
         vm.startBroadcast(privateKey);
-        marketplace = new Marketplace(0xc8baf8eEAB6F63aC4B2F8605E70e9367d9803D5e, 0xc8baf8eEAB6F63aC4B2F8605E70e9367d9803D5e);
+        marketplace = new Marketplace(0xdfD6d4Bd4C28244F6BaBA7C9c310E204611B399f, 0x38aC81461F2b67334116EBf873B4aE59C2A3d463);
         vm.stopBroadcast();
     }
 }

@@ -14,7 +14,7 @@ contract PublicTransportTrackerScript is Script {
     function run() public {
         uint256 privateKey = vm.envUint("DEPLOYER_WALLET_PRIVATE_KEY");
         vm.startBroadcast(privateKey);
-        publicTransportTracker = new PublicTransportTracker(1000000000000000000, 0xc8baf8eEAB6F63aC4B2F8605E70e9367d9803D5e, 0xc8baf8eEAB6F63aC4B2F8605E70e9367d9803D5e);
+        publicTransportTracker = new PublicTransportTracker(1000000000000000000, 0xd64302f0D3C880d75913f3a9C3324e663Bc4d09d, 0xdfD6d4Bd4C28244F6BaBA7C9c310E204611B399f);
         vm.stopBroadcast();
     }
 }

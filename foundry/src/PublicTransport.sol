@@ -8,7 +8,7 @@ contract PublicTransportTracker {
     IStorage private storage_; // Storage reference
     IStandardToken token;
 
-    constructor(address tokenAddress, uint256 _rewardPerUnit, address _storageAddress) {
+    constructor(uint256 _rewardPerUnit, address _storageAddress, address tokenAddress) {
         owner = msg.sender;
         rewardPerUnit = _rewardPerUnit;
         storage_ = IStorage(_storageAddress);
@@ -62,8 +62,8 @@ contract PublicTransportTracker {
     }
 
     // Admin functions
-    function updaterewardPerUnit(uint256 newFare) external onlyOwner {
-        rewardPerUnit = newFare;
+    function updaterewardPerUnit(uint256 newReward) external onlyOwner {
+        rewardPerUnit = newReward;
     }
 
     function updaterewardCap(uint256 newCap) external onlyOwner {
@@ -75,7 +75,7 @@ contract PublicTransportTracker {
         Journey storage journey = journeys[msg.sender];
         journey.entryStation = entryStation;
         journey.isOnWay = true;
-        journey.isOnWay = false;
+        journey.isCompleted = false;
 
         emit JourneyStarted(msg.sender, entryStation);
     }

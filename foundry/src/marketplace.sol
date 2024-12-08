@@ -6,7 +6,7 @@ import "./interfaceTransportTracker.sol";
 
 contract Marketplace {
     
-    ITestLogic private testLogic;
+    IPublicTransportTracker private transportToken;
     IStandardToken token;
 
     address payable public owner;
@@ -31,11 +31,11 @@ contract Marketplace {
 
     receive() external payable { }
 
-    constructor(address tokenAddress, address _testLogic){
+    constructor(address tokenAddress, address _transportToken){
         owner = payable(msg.sender);
         contractAddr = payable(address(this));
         token = IStandardToken(tokenAddress);
-        testLogic = ITestLogic(address(_testLogic));
+        transportToken = IPublicTransportTracker(address(_transportToken));
     }
 
     error InvalidAmount();
@@ -52,8 +52,8 @@ contract Marketplace {
 
     function purchaseItems(uint id) external payable{
         require(itemLists[id].stocks > 0, "item is not ready");
-        if(testLogic.testGetBalance(msg.sender) >= (itemLists[id].price)){
-            testLogic.testDeductBalance(msg.sender, (itemLists[id].price));
+        if(transportToken.testGetBalance(msg.sender) >= (itemLists[id].price)){
+            transportToken.testDeductBalance(msg.sender, (itemLists[id].price));
             itemLists[id].owner = payable(msg.sender);
             itemLists[id].status = true;
             itemLists[id].stocks--;
