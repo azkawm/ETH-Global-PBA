@@ -1,7 +1,7 @@
 "use client";
 import { calculateDistance } from "../../../utils/distanceCalculator";
 import { prepareEvent } from "thirdweb";
-import { useContractEvents } from "thirdweb/react";
+import { useContractEvents, useActiveAccount } from "thirdweb/react";
 import { contract } from "../../../client"; // Pastikan jalur ke client benar
 
 // Prepare events for JourneyStarted and JourneyCompleted
@@ -14,6 +14,9 @@ const journeyCompletedEvent = prepareEvent({
 });
 
 export default function JourneyHistory() {
+  const activeAccount = useActiveAccount();
+  const userAddress = activeAccount?.address || ""; // Mendapatkan alamat pengguna aktif
+
   const {
     data: startedEvents,
     isLoading: loadingStarted,
@@ -35,8 +38,10 @@ export default function JourneyHistory() {
   if (loadingStarted || loadingCompleted) return <p>Loading journey history...</p>;
   if (errorStarted || errorCompleted) return <p>Error loading events: {errorStarted?.message || errorCompleted?.message}</p>;
 
-  // Combine events based on passenger address
-  const combinedHistory = completedEvents?.map((completedEvent: any) => {
+  // Filter events based on the active user's address
+  const filteredCompletedEvents = completedEvents?.filter((event: any) => event.args.passenger === userAddress);
+
+  const combinedHistory = filteredCompletedEvents?.map((completedEvent: any) => {
     const { passenger, exitStation } = completedEvent.args;
     const startedEvent = startedEvents?.find((event: any) => event.args.passenger === passenger);
     const entryStation = startedEvent ? startedEvent.args.entryStation : "Unknown";
@@ -58,11 +63,7 @@ export default function JourneyHistory() {
       {combinedHistory && combinedHistory.length > 0 ? (
         <div className="flex flex-col gap-4">
           {combinedHistory.map((history: any, index: number) => (
-            <div
-              key={index}
-              className="bg-gray-700 p-4 rounded-lg shadow-md"
-              style={{ width: "100%" }} // Agar lebar menyesuaikan
-            >
+            <div key={index} className="bg-gray-700 p-4 rounded-lg shadow-md" style={{ width: "100%" }}>
               <p>
                 <strong>Passenger:</strong> {history.passenger}
               </p>
@@ -79,7 +80,7 @@ export default function JourneyHistory() {
           ))}
         </div>
       ) : (
-        <p className="text-gray-400">No journey history found.</p>
+        <p className="text-gray-400">No journey history found for the active account.</p>
       )}
     </div>
   );
