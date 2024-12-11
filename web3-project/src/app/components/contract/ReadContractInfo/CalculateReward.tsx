@@ -12,10 +12,13 @@ export default function CalculateReward({ distance }: { distance: number }) {
   if (isPending) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
+  // Konversi dari wei ke token penuh
+  const formattedReward = data ? (Number(data) / 1e18).toFixed(2) : "0";
+
   return (
     <div>
       <h3>Reward:</h3>
-      <p>{data?.toString()} Tokens</p>
+      <p>{formattedReward} Tokens</p> {/* Tampilkan reward dalam format yang lebih jelas */}
     </div>
   );
 }

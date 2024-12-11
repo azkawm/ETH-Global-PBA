@@ -7,13 +7,14 @@ import { contract } from "../../client";
 export default function TokenRedeem() {
   const { mutate: sendTransaction } = useSendTransaction();
   const [isLoading, setIsLoading] = useState(false); // State untuk loading
-  const [status, setStatus] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>(null); // State untuk status transaksi
 
   const handleRedeem = async () => {
     setStatus(null); // Reset status sebelum memulai
     setIsLoading(true); // Mulai loading
 
     try {
+      // Siapkan transaksi ke kontrak pintar
       const transaction = prepareContractCall({
         contract,
         method: "function tokenRedeem()",
@@ -23,14 +24,16 @@ export default function TokenRedeem() {
       // Kirim transaksi
       sendTransaction(transaction, {
         onSuccess: () => {
-          setStatus("Token redeem successfully executed!");
+          alert("Tokens redeemed successfully!");
+          setStatus("Redeem successful!");
         },
         onError: (err) => {
-          setStatus(`Error: ${err.message}`);
+          console.error("Redeem failed:", err);
+          setStatus(`Redeem failed: ${err.message}`);
         },
       });
     } catch (err) {
-      console.error(err);
+      console.error("Failed to prepare transaction:", err);
       setStatus("Failed to prepare the transaction.");
     } finally {
       setIsLoading(false); // Selesai loading

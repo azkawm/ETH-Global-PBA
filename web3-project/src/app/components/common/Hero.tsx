@@ -36,7 +36,7 @@ const Hero: React.FC = () => {
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-center w-screen h-screen  text-white overflow-hidden">
+    <div className="relative flex flex-col items-center justify-center w-screen h-screen  text-white ">
       {/* Icon Background */}
 
       <div ref={sceneRef} className="absolute inset-0 grid grid-cols-4 gap-4 opacity-100 pointer-events-none">

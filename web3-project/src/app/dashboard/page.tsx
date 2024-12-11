@@ -43,7 +43,13 @@ const ScrollAnimatedSection: React.FC = () => {
   ];
 
   return (
-    <motion.section ref={ref} className="flex flex-col justify-center items-center  p-10 py-20  text-center text-white" initial={{ opacity: 0, y: 50 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }}>
+    <motion.section
+      ref={ref}
+      className="flex flex-col justify-center items-center p-10 py-20 w-full max-w-screen-xl mx-auto text-center text-white"
+      initial={{ opacity: 0, y: 50 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.8 }}
+    >
       <h2 className="text-3xl font-bold mb-4">Join the Green Movement</h2>
 
       <p className="text-lg mb-8">Embrace sustainable travel and turn your carbon-saving habits into valuable rewards. Together, we can make a difference.</p>

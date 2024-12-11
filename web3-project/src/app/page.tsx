@@ -73,7 +73,7 @@ export default function Home() {
       </div>
 
       <div className="mt-6">
-        {/* <IDKitWidget app_id={app_id} action={action} onSuccess={onSuccess} handleVerify={handleVerify} verification_level={VerificationLevel.Device}>
+        <IDKitWidget app_id={app_id} action={action} onSuccess={onSuccess} handleVerify={handleVerify} verification_level={VerificationLevel.Device}>
           {({ open }) => (
             <div>
               <button onClick={open} className="mt-6 px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600" disabled={isVerified}>
@@ -81,7 +81,7 @@ export default function Home() {
               </button>
             </div>
           )}
-        </IDKitWidget> */}
+        </IDKitWidget>
       </div>
     </div>
   );
