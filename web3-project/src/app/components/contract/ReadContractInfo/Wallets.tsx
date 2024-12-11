@@ -1,10 +1,10 @@
 "use client";
 import { useReadContract } from "thirdweb/react";
-import { contract } from "../../../client";
+import { transportTrackerContract } from "../../../client";
 
 export default function GetWalletInfo({ userAddress }: { userAddress: string }) {
   const { data, isPending, error } = useReadContract({
-    contract,
+    contract: transportTrackerContract,
     method: "function wallets(address) view returns (string name, uint256 balance, uint256 milez)",
     params: [userAddress],
   });

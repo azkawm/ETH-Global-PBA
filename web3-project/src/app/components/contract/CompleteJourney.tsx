@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { prepareContractCall } from "thirdweb";
 import { useSendTransaction } from "thirdweb/react";
