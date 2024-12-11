@@ -1,6 +1,6 @@
 "use client";
 import { useReadContract } from "thirdweb/react";
-import { contract } from "../../../client";
+import { transportTrackerContract } from "../../../client";
 import { calculateDistance } from "../../../utils/distanceCalculator";
 
 export default function JourneyProgress({ userAddress }: { userAddress: string }) {
@@ -9,13 +9,13 @@ export default function JourneyProgress({ userAddress }: { userAddress: string }
     isPending: journeyLoading,
     error: journeyError,
   } = useReadContract({
-    contract,
+    contract: transportTrackerContract,
     method: "function journeys(address) view returns (string entryStation, string exitStation, bool isCompleted, bool isOnWay)",
     params: [userAddress],
   });
 
   const { data: rewardPerUnit, isPending: rewardLoading } = useReadContract({
-    contract,
+    contract: transportTrackerContract,
     method: "function rewardPerUnit() view returns (uint256)",
     params: [],
   });

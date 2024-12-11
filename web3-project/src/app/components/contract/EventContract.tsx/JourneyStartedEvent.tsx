@@ -2,7 +2,7 @@
 
 import { prepareEvent } from "thirdweb";
 import { useContractEvents } from "thirdweb/react";
-import { contract } from "../../../client"; // Pastikan jalur ke client benar
+import { transportTrackerContract } from "../../../client"; // Pastikan jalur ke client benar
 
 const preparedEvent = prepareEvent({
   signature: "event JourneyCompleted(address indexed passenger, string exitStation, uint256 fare)",
@@ -14,7 +14,7 @@ export default function JourneyCompletedEvent() {
     isLoading,
     error,
   } = useContractEvents({
-    contract,
+    contract: transportTrackerContract,
     events: [preparedEvent],
   });
 

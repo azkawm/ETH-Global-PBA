@@ -1,9 +1,9 @@
 "use client";
 import { useReadContract } from "thirdweb/react";
-import { contract } from "../../../client";
+import { transportTrackerContract } from "../../../client";
 export default function MilezCap() {
   const { data, isPending, error } = useReadContract({
-    contract,
+    contract: transportTrackerContract,
     method: "function milezCap() view returns (uint256)",
     params: [],
   });

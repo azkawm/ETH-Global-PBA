@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { prepareContractCall } from "thirdweb";
 import { useSendTransaction } from "thirdweb/react";
-import { contract } from "../../client";
+import { transportTrackerContract } from "../../client";
 
 export default function StartJourney() {
   const { mutate: sendTransaction } = useSendTransaction();
@@ -19,7 +19,7 @@ export default function StartJourney() {
 
     // Siapkan transaksi
     const transaction = prepareContractCall({
-      contract,
+      contract: transportTrackerContract,
       method: "function startJourney(string memory entryStation)",
       params: [entryStation],
     });

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { prepareContractCall } from "thirdweb";
 import { useSendTransaction } from "thirdweb/react";
-import { contract } from "../../client";
+import { transportTrackerContract } from "../../client";
 
 export default function TokenRedeem() {
   const { mutate: sendTransaction } = useSendTransaction();
@@ -16,7 +16,7 @@ export default function TokenRedeem() {
     try {
       // Siapkan transaksi ke kontrak pintar
       const transaction = prepareContractCall({
-        contract,
+        contract: transportTrackerContract,
         method: "function tokenRedeem()",
         params: [],
       });

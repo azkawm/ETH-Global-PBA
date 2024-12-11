@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { prepareContractCall } from "thirdweb";
 import { useSendTransaction, useReadContract } from "thirdweb/react";
-import { contract } from "../../client"; // Sesuaikan jalur impor
+import { transportTrackerContract } from "../../client"; // Sesuaikan jalur impor
 import { useActiveAccount } from "thirdweb/react";
 
 export default function WithdrawCarbonTokenModal({ onClose }: { onClose: () => void }) {
@@ -16,7 +16,7 @@ export default function WithdrawCarbonTokenModal({ onClose }: { onClose: () => v
 
   // Membaca balance dari kontrak menggunakan fungsi `storage_.getBalance`
   const { data: balance, isLoading: balanceLoading } = useReadContract({
-    contract,
+    contract: transportTrackerContract,
     method: "function testGetBalance(address) view returns (uint256)", // Ganti dengan fungsi testGetBalance
     params: [userAddress],
   });
@@ -36,7 +36,7 @@ export default function WithdrawCarbonTokenModal({ onClose }: { onClose: () => v
 
       // Siapkan transaksi
       const transaction = prepareContractCall({
-        contract,
+        contract: transportTrackerContract,
         method: "function withdrawCarbonToken(uint256 _amount)",
         params: [_amount],
       });

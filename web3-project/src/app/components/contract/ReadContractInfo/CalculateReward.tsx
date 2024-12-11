@@ -1,10 +1,10 @@
 "use client";
 import { useReadContract } from "thirdweb/react";
-import { contract } from "../../../client";
+import { transportTrackerContract } from "../../../client";
 
 export default function CalculateReward({ distance }: { distance: number }) {
   const { data, isPending, error } = useReadContract({
-    contract,
+    contract: transportTrackerContract,
     method: "function calculateReward(uint256 distance) view returns (uint256)",
     params: [BigInt(distance)], // Konversi ke BigInt jika diperlukan
   });

@@ -2,7 +2,7 @@
 import { calculateDistance } from "../../../utils/distanceCalculator";
 import { prepareEvent } from "thirdweb";
 import { useContractEvents, useActiveAccount } from "thirdweb/react";
-import { contract } from "../../../client"; // Pastikan jalur ke client benar
+import { transportTrackerContract } from "../../../client"; // Pastikan jalur ke client benar
 
 // Prepare events for JourneyStarted and JourneyCompleted
 const journeyStartedEvent = prepareEvent({
@@ -22,7 +22,7 @@ export default function JourneyHistory() {
     isLoading: loadingStarted,
     error: errorStarted,
   } = useContractEvents({
-    contract,
+    contract: transportTrackerContract,
     events: [journeyStartedEvent],
   });
 
@@ -31,7 +31,7 @@ export default function JourneyHistory() {
     isLoading: loadingCompleted,
     error: errorCompleted,
   } = useContractEvents({
-    contract,
+    contract: transportTrackerContract,
     events: [journeyCompletedEvent],
   });
 
