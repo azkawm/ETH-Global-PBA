@@ -55,8 +55,11 @@ export default function Header() {
           <Link href="/dashboard/Redeem" className={`hover:underline ${pathname === "/dashboard/Redeem" ? "text-teal-400 font-semibold px-4" : "hover:text-teal-400 px-4"}`}>
             Redeem
           </Link>
-          <Link href="/dashboard/Store" className={`hover:underline ${pathname === "/dashboard/Store" ? "text-teal-400 font-semibold px-4" : "hover:text-teal-400 px-4"}`}>
+          <Link href="/dashboard/MarketPlace" className={`hover:underline ${pathname === "/dashboard/MarketPlace" ? "text-teal-400 font-semibold px-4" : "hover:text-teal-400 px-4"}`}>
             MarketPlace
+          </Link>
+          <Link href="/dashboard/Store" className={`hover:underline ${pathname === "/dashboard/Store" ? "text-teal-400 font-semibold px-4" : "hover:text-teal-400 px-4"}`}>
+            Store
           </Link>
           <Link href="/dashboard/History" className={`hover:underline ${pathname === "/dashboard/History" ? "text-teal-400 font-semibold px-4" : "hover:text-teal-400 px-4"}`}>
             History
