@@ -7,6 +7,7 @@ export default {
     extend: {
       colors: {
         blues: "#00203F",
+        greens: "#a4f9c8",
         background: "var(--background)",
         foreground: "var(--foreground)",
       },

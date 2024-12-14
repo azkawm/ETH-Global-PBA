@@ -43,9 +43,9 @@ const ScrollAnimatedSection: React.FC = () => {
   ];
 
   return (
-    <div className="text-white">
+    <div className="">
       {/* Background Wrapper for Section 1 */}
-      <div className="bg-black">
+      <div className="bg-blues">
         <motion.section
           ref={ref}
           className="flex flex-col justify-center items-center p-10 py-20 w-full mx-auto text-center text-white"

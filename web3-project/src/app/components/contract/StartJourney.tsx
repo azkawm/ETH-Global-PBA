@@ -46,7 +46,6 @@ export default function StartJourney({ onJourneyStarted, onCancel }: StartJourne
       setIsLoading(true);
       setShowScanner(false);
       setEntryStation(scannedData);
-      setStatusMessage("Processing transaction...");
 
       const transaction = prepareContractCall({
         contract: transportTrackerContract,
@@ -84,7 +83,7 @@ export default function StartJourney({ onJourneyStarted, onCancel }: StartJourne
   }, []);
 
   return (
-    <div className="p-4 bg-gray-800 rounded-lg shadow-md text-white">
+    <div className="p-4 bg-gray-800  rounded-lg shadow-md text-white">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Start Journey with QR Code</h2>
         <button onClick={onCancel} disabled={isLoading} className="px-3 py-1 bg-red-500 hover:bg-red-600 rounded text-sm">
