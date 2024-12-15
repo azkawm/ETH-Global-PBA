@@ -2,7 +2,7 @@
 import React from "react";
 import Hero from "../components/common/Hero";
 import { motion } from "framer-motion";
-import JourneyAnimation from "../components/common/JourneyAnimation";
+
 import { useInView } from "react-intersection-observer";
 import { FaLeaf, FaCoins, FaGlobeAmericas, FaQrcode, FaShoppingBag } from "react-icons/fa";
 
