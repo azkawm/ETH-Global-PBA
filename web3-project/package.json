@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "install": "npm install --legacy-peer-deps",
+    "postinstall": "echo 'Installation completed!'",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -25,7 +25,8 @@
     "react-qr-code": "^2.0.15",
     "react-qr-scanner": "^1.0.0-alpha.11",
     "thirdweb": "^5.71.0",
-    "three": "^0.170.0"
+    "three": "^0.170.0",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@types/node": "^20",
