@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import QRCode from "react-qr-code";
+import QRCode from "react-qr-scanner";
 
 export default function GenerateStationQRCodes() {
   // Daftar stasiun
