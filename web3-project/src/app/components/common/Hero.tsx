@@ -3,10 +3,12 @@ import { useEffect, useRef } from "react";
 import { Bus, Train, Leaf, CreditCard, TreePine, CloudFog } from "lucide-react";
 import { gsap } from "gsap";
 import Background3D from "./Background3D";
+import { useRouter } from "next/navigation";
 
 const Hero: React.FC = () => {
   const sceneRef = useRef<HTMLDivElement>(null);
   const iconsRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     // GSAP Animation for Background Icons
@@ -113,6 +115,7 @@ const Hero: React.FC = () => {
           Reduce your carbon footprint and earn rewards by using eco-friendly transportation.
         </motion.p>
         <motion.button
+          onClick={() => router.push("/dashboard/Journey")}
           className="bg-teal-500 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-teal-600"
           whileHover={{
             scale: 1.1,
@@ -123,7 +126,7 @@ const Hero: React.FC = () => {
             boxShadow: "0px 0px 10px rgba(0, 255, 150, 0.5)",
           }}
         >
-          SCAN NOW
+          Start Now
         </motion.button>
       </motion.div>
 

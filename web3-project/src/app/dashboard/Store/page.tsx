@@ -5,7 +5,7 @@ import { useReadContract, useSendTransaction } from "thirdweb/react";
 import { prepareContractCall } from "thirdweb";
 import { marketplaceContract, tokenContract } from "../../client";
 import { motion } from "framer-motion";
-import { Package, ShoppingCart, AlertCircle } from "lucide-react";
+import { ShoppingCart, AlertCircle } from "lucide-react";
 
 interface Item {
   id: number;
@@ -15,39 +15,37 @@ interface Item {
   seller: string;
   owner: string;
   status: boolean;
+  imageUrl?: string;
 }
 
 export default function MarketplaceItemList() {
   const [items, setItems] = useState<Item[]>([]);
   const [purchaseStates, setPurchaseStates] = useState<{ [key: number]: { isLoading: boolean; status: string | null } }>({});
-  const { mutate: sendTransaction } = useSendTransaction();
+  const { mutateAsync: sendTransaction } = useSendTransaction();
 
-  // Use useReadContract for item ID 1
+  // Use useReadContract for item IDs
+
   const { data: item1Data, isLoading: isLoading1 } = useReadContract({
     contract: marketplaceContract,
     method: "function itemLists(uint256) view returns (uint256, string, uint256, uint256, address, address, bool)",
-    params: [BigInt(1)],
+    params: [BigInt(5)],
   });
-
-  // Use useReadContract for item ID 2
   const { data: item2Data, isLoading: isLoading2 } = useReadContract({
     contract: marketplaceContract,
     method: "function itemLists(uint256) view returns (uint256, string, uint256, uint256, address, address, bool)",
-    params: [BigInt(2)],
+    params: [BigInt(6)],
   });
 
-  // Use useReadContract for item ID 3
   const { data: item3Data, isLoading: isLoading3 } = useReadContract({
     contract: marketplaceContract,
     method: "function itemLists(uint256) view returns (uint256, string, uint256, uint256, address, address, bool)",
-    params: [BigInt(3)],
+    params: [BigInt(7)],
   });
 
-  // Use useReadContract for item ID 4
   const { data: item4Data, isLoading: isLoading4 } = useReadContract({
     contract: marketplaceContract,
     method: "function itemLists(uint256) view returns (uint256, string, uint256, uint256, address, address, bool)",
-    params: [BigInt(4)],
+    params: [BigInt(8)],
   });
 
   useEffect(() => {
@@ -57,9 +55,10 @@ export default function MarketplaceItemList() {
     itemsData.forEach((data, index) => {
       if (data) {
         const [id, name, price, stocks, seller, owner, status] = data;
-
-        // Only add items that have been initialized (have a name and price)
         if (name !== "" && Number(price) !== 0) {
+          // Memetakan gambar sesuai urutan item
+          const imageUrls = ["/img/hoodie.webp", "/img/tumbler.webp", "/img/backpack.webp", "/img/umbrella.webp"];
+
           allItems.push({
             id: Number(id),
             name: name,
@@ -68,20 +67,21 @@ export default function MarketplaceItemList() {
             seller: seller.toString(),
             owner: owner.toString(),
             status: status,
+            imageUrl: imageUrls[index] || "/img/default.png",
           });
         }
       }
     });
 
     setItems(allItems);
-  }, [item1Data, item2Data, item3Data, item4Data]);
+  }, [item1Data, item2Data]);
 
   const isLoading = isLoading1 || isLoading2 || isLoading3 || isLoading4;
 
   const handlePurchase = async (item: Item) => {
     setPurchaseStates((prev) => ({
       ...prev,
-      [item.id]: { isLoading: true, status: null },
+      [item.id]: { isLoading: true, status: "Processing approval..." },
     }));
 
     try {
@@ -93,6 +93,12 @@ export default function MarketplaceItemList() {
       });
 
       await sendTransaction(approveTransaction);
+
+      // Update state to show approval is done
+      setPurchaseStates((prev) => ({
+        ...prev,
+        [item.id]: { isLoading: true, status: "Approval complete. Processing purchase..." },
+      }));
 
       // Purchase item
       const purchaseTransaction = prepareContractCall({
@@ -118,8 +124,8 @@ export default function MarketplaceItemList() {
   if (isLoading) return <p className="text-center text-gray-300">Loading items...</p>;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-extrabold text-center text-white mb-8">Marketplace Items</h1>
+    <div className="container mx-auto px-6 py-8">
+      <h1 className="text-4xl font-extrabold text-center text-white mb-8">Milez Collective</h1>
       {items.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {items.map((item) => (
@@ -128,15 +134,16 @@ export default function MarketplaceItemList() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="relative bg-gray-800/90 backdrop-blur-md p-6 rounded-lg shadow-lg border border-gray-700 hover:scale-105 hover:shadow-2xl transition-transform duration-300"
+              className="relative bg-gray-800/90 backdrop-blur-md p-4 rounded-lg shadow-lg border border-gray-700 flex flex-col items-center"
             >
-              <div className="absolute -top-5 -right-5 bg-blue-500 p-3 rounded-full shadow-md">
-                <Package size={28} className="text-white" />
-              </div>
-              <h2 className="text-2xl font-bold text-blue-400 mb-2">{item.name}</h2>
-              <p className="text-gray-300">Price: {item.price} Tokens</p>
-              <p className="text-gray-300">Stocks: {item.stocks}</p>
-              <p className="text-gray-300">Seller: {`${item.seller.slice(0, 8)}...${item.seller.slice(-4)}`}</p>
+              {item.imageUrl && (
+                <div className="relative w-full flex items-center justify-center border border-gray-600 rounded-md overflow-hidden max-w-[200px] mx-auto">
+                  <img src={item.imageUrl} alt={item.name} className="w-full h-auto object-contain" />
+                </div>
+              )}
+              <h2 className="text-2xl font-bold text-blue-400 my-2 text-center">{item.name}</h2>
+              <p className="text-gray-300 text-center">Price: {Number(item.price) / 1e18} Milez</p>
+              <p className="text-gray-300 text-center">Stocks: {item.stocks}</p>
               <button
                 onClick={() => handlePurchase(item)}
                 disabled={item.stocks === 0 || purchaseStates[item.id]?.isLoading}

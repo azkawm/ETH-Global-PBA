@@ -60,7 +60,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
-      <h1 className="text-2xl font-bold mb-6">Welcome! Please Connect Your Wallet</h1>
+      <h1 className="text-2xl text-white font-bold mb-6">Welcome! Please Connect Your Wallet</h1>
 
       <div className="hidden md:flex items-center space-x-4 text-white px-6 py-2 rounded-xl">
         <ThirdwebConnectButton
