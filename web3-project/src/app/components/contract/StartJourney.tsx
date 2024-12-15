@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { prepareContractCall } from "thirdweb";
 import { useSendTransaction } from "thirdweb/react";
-import { QrReader } from "react-qr-reader";
+import QrScanner from "react-qr-scanner";
 import { transportTrackerContract } from "../../client";
 
 interface StartJourneyProps {
@@ -93,7 +93,12 @@ export default function StartJourney({ onJourneyStarted, onCancel }: StartJourne
 
       {showScanner && (
         <div className="mb-4">
-          <QrReader constraints={{ facingMode: "environment" }} onResult={handleScan} containerStyle={{ width: "100%" }} />
+          <QrScanner
+            delay={300} // Delay untuk scanning
+            onScan={handleScan} // Fungsi yang dipanggil saat QR Code berhasil di-scan
+            onError={(error) => console.error(error)} // Error handling
+            style={{ width: "100%" }} // Gaya untuk scanner
+          />
         </div>
       )}
 
