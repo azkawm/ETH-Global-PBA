@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { prepareContractCall } from "thirdweb";
 import { useSendTransaction } from "thirdweb/react";
-import { QrReader } from "react-qr-reader";
+import { QrReader } from "react-qr-scanner";
 import { transportTrackerContract } from "../../client";
 
 interface CompleteJourneyProps {
