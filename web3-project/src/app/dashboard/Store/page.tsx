@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useReadContract, useSendTransaction } from "thirdweb/react";
+import { useReadContract, useSendTransaction, useActiveAccount } from "thirdweb/react";
 import { prepareContractCall } from "thirdweb";
 import { marketplaceContract, tokenContract } from "../../client";
 import { motion } from "framer-motion";
@@ -19,11 +19,12 @@ interface Item {
 }
 
 export default function MarketplaceItemList() {
+  const activeAccount = useActiveAccount();
+  const userAddress = activeAccount?.address || "";
+
   const [items, setItems] = useState<Item[]>([]);
   const [purchaseStates, setPurchaseStates] = useState<{ [key: number]: { isLoading: boolean; status: string | null } }>({});
   const { mutateAsync: sendTransaction } = useSendTransaction();
-
-  // Use useReadContract for item IDs
 
   const { data: item1Data, isLoading: isLoading1 } = useReadContract({
     contract: marketplaceContract,
@@ -56,7 +57,6 @@ export default function MarketplaceItemList() {
       if (data) {
         const [id, name, price, stocks, seller, owner, status] = data;
         if (name !== "" && Number(price) !== 0) {
-          // Memetakan gambar sesuai urutan item
           const imageUrls = ["/img/hoodie.webp", "/img/tumbler.webp", "/img/backpack.webp", "/img/umbrella.webp"];
 
           allItems.push({
@@ -79,6 +79,15 @@ export default function MarketplaceItemList() {
   const isLoading = isLoading1 || isLoading2 || isLoading3 || isLoading4;
 
   const handlePurchase = async (item: Item) => {
+    // Jika user belum terhubung, tampilkan pesan
+    if (!userAddress) {
+      setPurchaseStates((prev) => ({
+        ...prev,
+        [item.id]: { isLoading: false, status: "Please connect your wallet first!" },
+      }));
+      return;
+    }
+
     setPurchaseStates((prev) => ({
       ...prev,
       [item.id]: { isLoading: true, status: "Processing approval..." },
@@ -126,6 +135,7 @@ export default function MarketplaceItemList() {
   return (
     <div className="container mx-auto px-6 py-8">
       <h1 className="text-4xl font-extrabold text-center text-white mb-8">Milez Collective</h1>
+      {/* {userAddress && <p className="text-center text-gray-300 mb-4">Connected: {userAddress}</p>} */}
       {items.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {items.map((item) => (
@@ -159,7 +169,7 @@ export default function MarketplaceItemList() {
                 )}
               </button>
               {purchaseStates[item.id]?.status && (
-                <div className={`mt-2 text-sm flex items-center ${purchaseStates[item.id]?.status?.includes("failed") ? "text-red-400" : "text-green-400"}`}>
+                <div className={`mt-2 text-sm flex items-center ${purchaseStates[item.id]?.status?.toLowerCase().includes("failed") ? "text-red-400" : "text-green-400"}`}>
                   <AlertCircle size={16} className="mr-2" />
                   {purchaseStates[item.id]?.status}
                 </div>
