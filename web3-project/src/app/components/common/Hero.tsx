@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
-import { Bus, Train, Leaf, CreditCard, TreePine, Bike } from "lucide-react";
+import { Bus, Train, Leaf, CreditCard, TreePine, CloudFog } from "lucide-react";
 import { gsap } from "gsap";
 import Background3D from "./Background3D";
 
@@ -47,14 +47,14 @@ const Hero: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative flex flex-col items-center justify-center w-screen h-screen text-white bg-gradient-to-br from-teal-500 to-blue-900">
+    <div className="relative rounded-b-3xl flex flex-col items-center justify-center w-full h-screen text-white bg-gradient-to-br from-teal-500 to-blue-900 overflow-hidden">
       {/* 3D Background */}
-      <div ref={sceneRef} className="absolute inset-0 grid grid-cols-4 gap-4 opacity-100 pointer-events-none">
+      <div ref={sceneRef} className="absolute inset-0 pointer-events-none overflow-hidden">
         <Background3D />
       </div>
 
       {/* Floating Icons */}
-      <div ref={iconsRef} className="absolute inset-0 z-10">
+      <div ref={iconsRef} className="absolute inset-0 z-10 flex items-center justify-center max-w-full overflow-hidden">
         {/* Left Column */}
         <div className="absolute top-20 left-20 animate-float-slow">
           <Bus className="w-12 h-12 text-white" />
@@ -74,12 +74,13 @@ const Hero: React.FC = () => {
           <CreditCard className="w-12 h-12 text-white" />
         </div>
         <div className="absolute top-2/3 right-20 animate-float-fast">
-          <Bike className="w-14 h-14 text-white" /> {/* New icon added */}
+          <CloudFog className="w-14 h-14 text-white" />
         </div>
       </div>
+
       {/* Animated Text and CTA */}
       <motion.div
-        className="relative z-20 text-center"
+        className="relative z-20 text-center px-6"
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{

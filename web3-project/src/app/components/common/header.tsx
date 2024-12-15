@@ -7,6 +7,7 @@ import { ConnectButton as ThirdwebConnectButton } from "thirdweb/react";
 import { client } from "../../client";
 import React from "react";
 import WithdrawCarbonTokenModal from "../contract/WithdrawCarbonToken";
+import { Wallet } from "lucide-react";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,8 +38,8 @@ export default function Header() {
   }, []);
 
   return (
-    <div className={`sticky w-full top-0 z-50 transition-all duration-300 ${isScrolled ? "bg-white text-black" : "bg-black text-white"}`}>
-      <header className="container mx-auto flex justify-between items-center p-6 ">
+    <div className={`sticky w-full top-0 z-50  transition-all duration-300 ${isScrolled ? "bg-white text-black" : "bg-black text-white"}`}>
+      <header className="container mx-auto flex justify-between items-center p-4  ">
         {/* Logo */}
         <div className="text-2xl font-bold px-4 py-2">
           <span className="bg-gradient-to-r from-teal-400 to-blue-500 text-transparent bg-clip-text">MILEZ</span>
@@ -66,8 +67,11 @@ export default function Header() {
           </Link>
         </div>
 
-        <button onClick={() => setShowModal(true)} className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg">
-          View Balance / Withdraw
+        <button
+          onClick={() => setShowModal(true)}
+          className="flex items-center justify-center w-12 h-12 bg-blue-500 hover:bg-blue-600 rounded-full shadow-md transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+        >
+          <Wallet size={24} className="text-white" />
         </button>
 
         {/* Tombol Connect Wallet */}

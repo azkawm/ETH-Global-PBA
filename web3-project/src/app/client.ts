@@ -20,7 +20,7 @@ const chain = defineChain(11155420);
 export const marketplaceContract = getContract({
   client,
   chain: chain,
-  address: "0xf90a05b72D706fa7B23a07d7cB2C37d186b41574", // Address of the Marketplace contract
+  address: "0x807421F9aD265896B2894f680A4d4bAD5259b895", // Address of the Marketplace contract
 });
 
 // Second contract
@@ -28,4 +28,10 @@ export const transportTrackerContract = getContract({
   client,
   chain: chain,
   address: "0x38aC81461F2b67334116EBf873B4aE59C2A3d463", // Address of the Transport Tracker contract
+});
+
+export const tokenContract = getContract({
+  client,
+  chain: chain,
+  address: "0xdfD6d4Bd4C28244F6BaBA7C9c310E204611B399f", // Address of the Transport Tracker contract
 });

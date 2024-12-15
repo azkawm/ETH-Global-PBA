@@ -1,4 +1,5 @@
 "use client";
+
 import { useActiveAccount, useReadContract } from "thirdweb/react";
 import { useState, useEffect } from "react";
 import StartJourney from "../../components/contract/StartJourney";
@@ -39,40 +40,40 @@ export default function JourneyPage() {
   const handleJourneyCompleted = () => {
     setIsOnProgress(false);
     setShowCompleteJourney(false);
+    setShowStartJourney(false); // Pastikan kamera QR ditutup
   };
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-slate-900/50 backdrop-blur-sm">
+      <div className="flex justify-center items-center min-h-screen bg-slate-900/50 backdrop-blur-sm w-full">
         <div className="text-center text-white">
           <p>Loading journey status...</p>
-          <div className="spinner-border text-blue-400 animate-spin mt-4" style={{ width: "3rem", height: "3rem" }}></div>
-        </div>
-      </div>
-    );
-  }
-
-  if (journeyError) {
-    return (
-      <div className="p-6 min-h-screen bg-cover" style={{ backgroundImage: "url(/img/road.jpg)" }}>
-        <div className="flex justify-center items-center">
-          <p className="text-red-400 font-semibold bg-slate-900/70 backdrop-blur-md p-4 rounded-lg">Error loading your journey data: {journeyError.message}</p>
+          <div className="animate-spin mt-4 w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full"></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="relative p-6 min-h-screen bg-cover bg-center" style={{ backgroundImage: "url(/img/road.jpg)" }}>
+    <div className="relative w-full min-h-screen overflow-hidden">
+      {/* Background Image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage: "url(/img/road.jpg)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      ></div>
       {/* Subtle dark overlay */}
       <div className="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
 
       {/* Main content */}
-      <div className="relative z-10 flex flex-col items-center justify-center h-full">
+      <div className="relative z-10 flex flex-col items-center justify-center h-full px-4">
         <h1 className="text-5xl font-extrabold text-center mb-12 text-white drop-shadow-lg">Manage Your Journey</h1>
 
         {/* Flex container */}
-        <div className="flex flex-col lg:flex-row gap-8 justify-center w-full max-h-full max-w-7xl">
+        <div className="flex flex-col lg:flex-row gap-8 justify-center w-full max-w-screen-lg mx-auto">
           {/* Left Section */}
           <div className="flex-1 bg-slate-900/40 backdrop-blur-md p-8 rounded-xl border border-white/10 shadow-2xl">
             <h2 className="text-2xl lg:text-3xl font-semibold text-center mb-6 text-blue-400">Journey Management</h2>
@@ -85,7 +86,7 @@ export default function JourneyPage() {
                       onClick={() => setShowStartJourney(true)}
                       disabled={!userAddress}
                       className={`flex items-center justify-center gap-3 w-full p-4 rounded-lg text-lg font-medium transition-all duration-300 ${
-                        userAddress ? "bg-blue-500/80 hover:bg-blue-600 text-white hover:scale-105 backdrop-blur-sm" : "bg-gray-600/50 text-gray-400 cursor-not-allowed"
+                        userAddress ? "bg-blue-500/80 hover:bg-blue-600 text-white hover:scale-105" : "bg-gray-600/50 text-gray-400 cursor-not-allowed"
                       }`}
                     >
                       <Scan size={24} />
@@ -104,7 +105,7 @@ export default function JourneyPage() {
                   {!showCompleteJourney ? (
                     <button
                       onClick={() => setShowCompleteJourney(true)}
-                      className="flex items-center justify-center gap-3 w-full p-4 rounded-lg bg-green-500/80 hover:bg-green-600 text-white text-lg font-medium transition-all duration-300 hover:scale-105 backdrop-blur-sm"
+                      className="flex items-center justify-center gap-3 w-full p-4 rounded-lg bg-green-500/80 hover:bg-green-600 text-white text-lg font-medium transition-all duration-300 hover:scale-105"
                     >
                       <CheckCircle2 size={24} />
                       Complete Journey

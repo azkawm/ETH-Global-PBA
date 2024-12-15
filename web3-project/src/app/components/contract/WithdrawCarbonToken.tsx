@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { prepareContractCall } from "thirdweb";
 import { useSendTransaction, useReadContract } from "thirdweb/react";
-import { transportTrackerContract } from "../../client"; // Sesuaikan jalur impor
+import { transportTrackerContract } from "../../client";
 import { useActiveAccount } from "thirdweb/react";
+import { XCircle } from "lucide-react"; // Import icon Close dari React Lucide
 
 export default function WithdrawCarbonTokenModal({ onClose }: { onClose: () => void }) {
   const { mutate: sendTransaction } = useSendTransaction();
@@ -14,10 +15,9 @@ export default function WithdrawCarbonTokenModal({ onClose }: { onClose: () => v
   const activeAccount = useActiveAccount();
   const userAddress = activeAccount?.address || "";
 
-  // Membaca balance dari kontrak menggunakan fungsi `storage_.getBalance`
   const { data: balance, isLoading: balanceLoading } = useReadContract({
     contract: transportTrackerContract,
-    method: "function testGetBalance(address) view returns (uint256)", // Ganti dengan fungsi testGetBalance
+    method: "function testGetBalance(address) view returns (uint256)",
     params: [userAddress],
   });
 
@@ -27,25 +27,22 @@ export default function WithdrawCarbonTokenModal({ onClose }: { onClose: () => v
       return;
     }
 
-    setStatus(null); // Reset status
-    setIsLoading(true); // Mulai loading
+    setStatus(null);
+    setIsLoading(true);
 
     try {
-      // Konversi jumlah ke bigint
-      const _amount = BigInt(amount) * BigInt(1e18); // Konversi ke Wei
+      const _amount = BigInt(amount) * BigInt(1e18);
 
-      // Siapkan transaksi
       const transaction = prepareContractCall({
         contract: transportTrackerContract,
         method: "function withdrawCarbonToken(uint256 _amount)",
         params: [_amount],
       });
 
-      // Kirim transaksi
       sendTransaction(transaction, {
         onSuccess: () => {
           setStatus(`Withdraw successfully executed! Amount: ${amount} tokens.`);
-          setAmount(""); // Reset input setelah transaksi berhasil
+          setAmount("");
         },
         onError: (err) => {
           setStatus(`Error: ${err.message}`);
@@ -55,37 +52,55 @@ export default function WithdrawCarbonTokenModal({ onClose }: { onClose: () => v
       console.error(err);
       setStatus("Failed to prepare the transaction.");
     } finally {
-      setIsLoading(false); // Selesai loading
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-white max-w-md w-full">
-        <h2 className="text-xl font-bold mb-4">Withdraw Carbon Token</h2>
+    <div className="fixed inset-0 flex items-center justify-center bg-black/70 backdrop-blur-md z-50">
+      {/* Modal Container */}
+      <div className="relative bg-gray-900/80 border border-gray-700/50 backdrop-blur-lg p-8 rounded-2xl shadow-2xl max-w-lg w-full">
+        {/* Tombol Close */}
+        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-red-400 transition-all duration-300">
+          <XCircle size={28} />
+        </button>
+
+        {/* Title */}
+        <h2 className="text-3xl font-bold mb-6 text-center text-white">Withdraw Carbon Token</h2>
+
+        {/* Balance Info */}
         {balanceLoading ? (
-          <p>Loading balance...</p>
+          <p className="text-center mb-6 text-gray-300">Loading balance...</p>
         ) : (
-          <p className="mb-4">
-            <strong>Your Balance:</strong> {balance ? (Number(balance) / 1e18).toFixed(0) : "0"} Milez
+          <p className="text-center mb-6 text-lg text-gray-300">
+            <span className="font-semibold text-teal-400">Your Balance:</span> {balance ? (Number(balance) / 1e18).toFixed(0) : "0"} Milez
           </p>
         )}
 
-        {/* Input untuk jumlah penarikan */}
-        <input type="number" className="w-full px-4 py-2 mb-4 text-black rounded-lg" placeholder="Enter amount" value={amount} onChange={(e) => setAmount(e.target.value)} disabled={isLoading} />
+        {/* Input Field */}
+        <div className="mb-6">
+          <label className="block mb-2 text-gray-400">Enter Amount</label>
+          <input
+            type="number"
+            className="w-full px-4 py-3 rounded-lg bg-gray-800 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-400"
+            placeholder="Amount to withdraw"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            disabled={isLoading}
+          />
+        </div>
 
-        {/* Tombol Withdraw */}
-        <button onClick={handleWithdraw} className={`w-full px-4 py-2 font-semibold rounded-lg ${isLoading ? "bg-gray-500 cursor-not-allowed" : "bg-teal-500 hover:bg-teal-600"}`} disabled={isLoading || !amount}>
+        {/* Withdraw Button */}
+        <button
+          onClick={handleWithdraw}
+          className={`w-full px-4 py-3 font-bold rounded-lg transition-all duration-300 ${isLoading ? "bg-gray-500 cursor-not-allowed" : "bg-teal-500 hover:bg-teal-600 hover:scale-105"}`}
+          disabled={isLoading || !amount}
+        >
           {isLoading ? "Withdrawing..." : "Withdraw"}
         </button>
 
-        {/* Menampilkan status */}
-        {status && <p className="mt-4 text-sm">{status}</p>}
-
-        {/* Tombol untuk menutup modal */}
-        <button onClick={onClose} className="mt-4 w-full px-4 py-2 bg-red-500 hover:bg-red-600 rounded-lg">
-          Close
-        </button>
+        {/* Status */}
+        {status && <p className="mt-4 text-center text-sm text-gray-300">{status}</p>}
       </div>
     </div>
   );

@@ -6,8 +6,10 @@ export default {
   theme: {
     extend: {
       colors: {
-        blues: "#00203F",
-        greens: "#a4f9c8",
+        bluess: "#0C1C34",
+        blues: "#040C1C",
+        greens: "#00a1ac",
+        grens: "#00c59d",
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
