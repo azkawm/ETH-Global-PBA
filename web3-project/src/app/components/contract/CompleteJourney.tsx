@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { prepareContractCall } from "thirdweb";
 import { useSendTransaction } from "thirdweb/react";
-import { QrReader } from "react-qr-reader";
+import QrScanner from "react-qr-scanner";
 import { transportTrackerContract } from "../../client";
 
 interface CompleteJourneyProps {
@@ -102,7 +102,12 @@ export default function CompleteJourney({ onJourneyCompleted, onCancel }: Comple
 
       {showScanner && (
         <div className="mb-4">
-          <QrReader constraints={{ facingMode: "environment" }} onResult={handleScan} containerStyle={{ width: "100%" }} />
+          <QrScanner
+            delay={300} // Delay untuk scanning
+            onScan={handleScan} // Fungsi saat berhasil scan
+            onError={handleScanError} // Fungsi error
+            style={{ width: "100%" }} // Gaya scanner
+          />
         </div>
       )}
 
