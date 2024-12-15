@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-import "./storage.sol";
+import "./Storage.sol";
 
 pragma solidity ^0.8.0;
 

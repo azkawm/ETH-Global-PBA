@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./interfaceToken.sol";
-import "./interfaceStorage.sol";
+import "./InterfaceToken.sol";
+import "./InterfaceStorage.sol";
 
 contract PublicTransportTracker {
     IStorage private storage_; // Storage reference

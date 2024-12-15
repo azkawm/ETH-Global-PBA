@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./interfaceToken.sol";
-import "./interfaceTransportTracker.sol";
+import "./InterfaceToken.sol";
+import "./InterfaceTransportTracker.sol";
 
 contract Marketplace {
     
@@ -41,9 +41,10 @@ contract Marketplace {
     error InvalidAmount();
     error InvalidAddress();
 
-    function listingItems(string memory n, uint p) external{
+    function listingItems(string memory n, uint p) external onlyOwner{
         counter++;
         itemLists[counter]=Item(counter, n, p, 0, payable(msg.sender), payable(address(0)),false);
+        emit Listing(msg.sender,itemLists[counter]);
     }
 
     function getItemReady(uint id, uint _stocks) external{
@@ -79,5 +80,10 @@ contract Marketplace {
         }else{
             revert InvalidAddress();
         }
+    }
+    
+    modifier onlyOwner() {
+        require(msg.sender==owner,"Invalid Credential");
+        _;
     }
 }
