@@ -46,7 +46,6 @@ export default function CompleteJourney({ onJourneyCompleted, onCancel }: Comple
       setIsLoading(true);
       setShowScanner(false);
       setExitStation(scannedData);
-      setStatusMessage("Processing transaction...");
 
       const transaction = prepareContractCall({
         contract: transportTrackerContract,

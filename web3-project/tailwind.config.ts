@@ -5,6 +5,9 @@ export default {
   darkMode: "class", // Pastikan darkMode berada di tingkat atas
   theme: {
     extend: {
+      screens: {
+        lg: "835px",
+      },
       colors: {
         bluess: "#0C1C34",
         blues: "#040C1C",
@@ -15,8 +18,9 @@ export default {
       },
       backgroundImage: {
         "custom-gradient": "linear-gradient(140deg, #14b8a6, #003566)", // teal-500 (#14b8a6)
+        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwind-scrollbar")],
 } satisfies Config;

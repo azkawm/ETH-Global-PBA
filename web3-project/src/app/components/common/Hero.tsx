@@ -61,7 +61,8 @@ const Hero: React.FC = () => {
         <div className="absolute top-20 left-20 animate-float-slow">
           <Bus className="w-12 h-12 text-white" />
         </div>
-        <div className="absolute top-1/3 left-32 animate-float-medium">
+        <div className="absolute top-1/3 left-32 animate-float-medium lg:block hidden">
+          {/* Leaf akan disembunyikan di layar md atau lebih kecil */}
           <Leaf className="w-10 h-10 text-white" />
         </div>
         <div className="absolute top-2/3 left-20 animate-float-fast">
@@ -72,7 +73,8 @@ const Hero: React.FC = () => {
         <div className="absolute top-20 right-20 animate-float-medium">
           <Train className="w-16 h-16 text-white" />
         </div>
-        <div className="absolute top-1/3 right-32 animate-float-slow">
+        <div className="absolute top-1/3 right-32 animate-float-slow lg:block hidden">
+          {/* CreditCard akan disembunyikan di layar md atau lebih kecil */}
           <CreditCard className="w-12 h-12 text-white" />
         </div>
         <div className="absolute top-2/3 right-20 animate-float-fast">
