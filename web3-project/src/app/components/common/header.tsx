@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { ConnectButton as ThirdwebConnectButton } from "thirdweb/react";
 import { client } from "../../client";
-import React from "react";
 import WithdrawCarbonTokenModal from "../contract/WithdrawCarbonToken";
 import { Wallet } from "lucide-react";
 
@@ -14,88 +13,97 @@ export default function Header() {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
 
-  const closeMenu = () => {
-    setIsOpen(false);
-  };
+  const toggleMenu = () => setIsOpen(!isOpen);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      console.log("Scroll Position:", scrollTop); // Debugging
-      const isTop = scrollTop < 100;
-      setIsScrolled(!isTop);
-    };
-
-    document.addEventListener("scroll", handleScroll);
-
-    return () => {
-      document.removeEventListener("scroll", handleScroll);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 100);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
-    <div
-      className={`
-      sticky w-full top-0 z-50 transition-all duration-300 
-      ${isScrolled ? "bg-black/60 backdrop-blur-md text-white" : "bg-black text-white"}
-    `}
-    >
-      <header className="container mx-auto flex justify-between items-center p-4  ">
+    <div className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? "bg-black/70 backdrop-blur-lg text-white" : "bg-gray-900 text-white"}`}>
+      {/* Header Container */}
+      <header className="relative w-full flex justify-between items-center px-6 py-3">
         {/* Logo */}
-        <div className="text-2xl font-bold px-4 py-2">
+        <div className="text-2xl font-bold">
           <span className="bg-gradient-to-r from-teal-400 to-blue-500 text-transparent bg-clip-text">MILEZ</span>
         </div>
 
-        {/* Menu Navigasi */}
-        <div className="hidden md:flex items-center px-6 py-4">
-          <Link href="/dashboard" className={`hover:underline ${pathname === "/dashboard" ? "text-teal-400 font-semibold px-4" : "hover:text-teal-400 px-4"}`}>
-            Home
-          </Link>
-          <Link href="/dashboard/Journey" className={`hover:underline ${pathname === "/dashboard/Journey" ? "text-teal-400 font-semibold px-4" : "hover:text-teal-400 px-4"}`}>
-            Journey
-          </Link>
-          <Link href="/dashboard/Redeem" className={`hover:underline ${pathname === "/dashboard/Redeem" ? "text-teal-400 font-semibold px-4" : "hover:text-teal-400 px-4"}`}>
-            Redeem
-          </Link>
-          {/* <Link href="/dashboard/MarketPlace" className={`hover:underline ${pathname === "/dashboard/MarketPlace" ? "text-teal-400 font-semibold px-4" : "hover:text-teal-400 px-4"}`}>
-            MarketPlace
-          </Link> */}
-          <Link href="/dashboard/Store" className={`hover:underline ${pathname === "/dashboard/Store" ? "text-teal-400 font-semibold px-4" : "hover:text-teal-400 px-4"}`}>
-            Store
-          </Link>
-          <Link href="/dashboard/History" className={`hover:underline ${pathname === "/dashboard/History" ? "text-teal-400 font-semibold px-4" : "hover:text-teal-400 px-4"}`}>
-            History
-          </Link>
+        {/* Desktop Navigation */}
+        <div className="hidden lg:flex items-center space-x-8">
+          {[
+            { name: "Home", path: "/dashboard" },
+            { name: "Journey", path: "/dashboard/Journey" },
+            { name: "Redeem", path: "/dashboard/Redeem" },
+            { name: "Store", path: "/dashboard/Store" },
+            { name: "History", path: "/dashboard/History" },
+          ].map((link) => (
+            <Link key={link.path} href={link.path} className={`relative pb-2 font-medium transition-all duration-300 ${pathname === link.path ? "text-teal-400" : "hover:text-teal-400"}`}>
+              {link.name}
+              {/* Garis bawah aktif */}
+              {pathname === link.path && <span className="absolute bottom-0 left-0 w-full h-[2px] bg-teal-400"></span>}
+            </Link>
+          ))}
         </div>
 
-        <button
-          onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-full transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-        >
-          <Wallet size={24} className="text-white" />
-          <span className="font-semibold text-sm">Bal</span>
-        </button>
-
-        {/* Tombol Connect Wallet */}
-        <div className="hidden md:flex items-center space-x-4 px-6 py-2 rounded-xl">
+        {/* Balance & Wallet Button */}
+        <div className="hidden lg:flex items-center space-x-4">
+          <button onClick={() => setShowModal(true)} className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-full transition-all duration-300">
+            <Wallet size={20} />
+            <span className="text-sm font-semibold">Balance</span>
+          </button>
           <ThirdwebConnectButton client={client} theme="dark" />
         </div>
 
-        {/* Tombol Mobile Menu */}
-        <div className="md:hidden bg-blues px-4 py-2 rounded-xl flex items-center">
-          <span className="mr-2">MENU</span>
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
+        {/* Mobile Menu Button (Tampil hanya di ukuran lg ke bawah) */}
+        <div className="lg:hidden">
+          <button onClick={toggleMenu} className="text-white">
+            {isOpen ? (
+              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            )}
+          </button>
         </div>
 
-        {/* Modal */}
-        {showModal && <WithdrawCarbonTokenModal onClose={() => setShowModal(false)} />}
+        {/* Garis Bawah Global di Navbar */}
+        <span className="absolute bottom-0 left-0 w-full h-[2px] bg-gray-600/20"></span>
       </header>
+
+      {/* Mobile Navigation */}
+      {isOpen && (
+        <div className="lg:hidden bg-gray-900 text-white flex flex-col items-center space-y-4 py-4">
+          <Link href="/dashboard" onClick={() => setIsOpen(false)} className="hover:text-teal-400">
+            Home
+          </Link>
+          <Link href="/dashboard/Journey" onClick={() => setIsOpen(false)} className="hover:text-teal-400">
+            Journey
+          </Link>
+          <Link href="/dashboard/Redeem" onClick={() => setIsOpen(false)} className="hover:text-teal-400">
+            Redeem
+          </Link>
+          <Link href="/dashboard/Store" onClick={() => setIsOpen(false)} className="hover:text-teal-400">
+            Store
+          </Link>
+          <Link href="/dashboard/History" onClick={() => setIsOpen(false)} className="hover:text-teal-400">
+            History
+          </Link>
+          <button onClick={() => setShowModal(true)} className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-full transition-all duration-300">
+            <Wallet size={20} />
+            <span className="text-sm font-semibold">Balance</span>
+          </button>
+          <ThirdwebConnectButton client={client} theme="dark" />
+        </div>
+      )}
+
+      {/* Modal */}
+      {showModal && <WithdrawCarbonTokenModal onClose={() => setShowModal(false)} />}
     </div>
   );
 }

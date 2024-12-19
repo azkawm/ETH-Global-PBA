@@ -29,3 +29,24 @@ section {
   border: none;
   background: transparent;
 }
+
+/* Custom Scrollbar */
+html::-webkit-scrollbar {
+  width: 8px; /* Lebar scrollbar */
+}
+
+html::-webkit-scrollbar-track {
+  background: rgba(89, 89, 90, 0.3); /* Warna track transparan */
+  backdrop-filter: blur(5px); /* Blur pada track */
+  border-radius: 10px; /* Membulatkan track */
+}
+
+html::-webkit-scrollbar-thumb {
+  background: rgba(100, 100, 100, 0.5); /* Warna thumb transparan */
+  border-radius: 10px; /* Membulatkan thumb */
+  backdrop-filter: blur(5px); /* Blur pada thumb */
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: rgba(150, 150, 150, 0.6); /* Thumb saat hover */
+}
