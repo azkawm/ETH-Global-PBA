@@ -29,24 +29,24 @@ export default function MarketplaceItemList() {
   const { data: item1Data, isLoading: isLoading1 } = useReadContract({
     contract: marketplaceContract,
     method: "function itemLists(uint256) view returns (uint256, string, uint256, uint256, address, address, bool)",
-    params: [BigInt(5)],
+    params: [BigInt(1)],
   });
   const { data: item2Data, isLoading: isLoading2 } = useReadContract({
     contract: marketplaceContract,
     method: "function itemLists(uint256) view returns (uint256, string, uint256, uint256, address, address, bool)",
-    params: [BigInt(6)],
+    params: [BigInt(2)],
   });
 
   const { data: item3Data, isLoading: isLoading3 } = useReadContract({
     contract: marketplaceContract,
     method: "function itemLists(uint256) view returns (uint256, string, uint256, uint256, address, address, bool)",
-    params: [BigInt(7)],
+    params: [BigInt(3)],
   });
 
   const { data: item4Data, isLoading: isLoading4 } = useReadContract({
     contract: marketplaceContract,
     method: "function itemLists(uint256) view returns (uint256, string, uint256, uint256, address, address, bool)",
-    params: [BigInt(8)],
+    params: [BigInt(4)],
   });
 
   useEffect(() => {
