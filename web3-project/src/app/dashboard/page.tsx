@@ -3,6 +3,7 @@ import React from "react";
 import Hero from "../components/common/Hero";
 import { motion } from "framer-motion";
 import "../globals.css";
+import ScrollToTopButton from "../components/common/ScrollToTopButton";
 import { useInView } from "react-intersection-observer";
 import { FaLeaf, FaCoins, FaGlobeAmericas, FaQrcode, FaShoppingBag } from "react-icons/fa";
 
@@ -13,6 +14,9 @@ export default function Home() {
 
       {/* Animated Section with Scroll Trigger */}
       <ScrollAnimatedSection />
+
+      {/* Scroll to Top Button */}
+      <ScrollToTopButton />
     </div>
   );
 }

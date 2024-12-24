@@ -22,7 +22,7 @@ export default function CompleteJourney({ onJourneyCompleted, onCancel }: Comple
   const lastScanTimeRef = useRef<number>(0);
   const isProcessingRef = useRef<boolean>(false);
 
-  const SCAN_COOLDOWN = 5000; // 5 seconds cooldown between scans
+  const SCAN_COOLDOWN = 2000; // 5 seconds cooldown between scans
 
   const handleScan = async (result: any) => {
     if (result?.text && !isProcessingRef.current) {
@@ -33,7 +33,11 @@ export default function CompleteJourney({ onJourneyCompleted, onCancel }: Comple
       if (scannedData !== lastScannedDataRef.current && currentTime - lastScanTimeRef.current > SCAN_COOLDOWN) {
         lastScannedDataRef.current = scannedData;
         lastScanTimeRef.current = currentTime;
-        await processTransaction(scannedData);
+        try {
+          await processTransaction(scannedData);
+        } catch {
+          isProcessingRef.current = false;
+        }
       }
     }
   };

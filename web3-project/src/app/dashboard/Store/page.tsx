@@ -130,7 +130,15 @@ export default function MarketplaceItemList() {
     }
   };
 
-  if (isLoading) return <p className="text-center text-gray-300">Loading items...</p>;
+  if (isLoading)
+    return (
+      <div className="flex justify-center items-center min-h-screen   w-full">
+        <div className="text-center text-white">
+          <p>Loading Items...</p>
+          <div className="animate-spin mt-4 w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full"></div>
+        </div>
+      </div>
+    );
 
   return (
     <div className="container mx-auto px-6 py-8">

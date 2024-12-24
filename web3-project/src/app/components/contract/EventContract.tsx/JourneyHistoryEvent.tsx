@@ -5,6 +5,7 @@ import { useContractEvents, useActiveAccount } from "thirdweb/react";
 import { transportTrackerContract } from "../../../client";
 import { motion } from "framer-motion";
 import { Award, MapPin, User } from "lucide-react";
+import { useEffect } from "react";
 
 // Prepare events for JourneyStarted and JourneyCompleted
 const journeyStartedEvent = prepareEvent({
@@ -28,12 +29,28 @@ export default function JourneyHistory() {
     data: completedEvents,
     isLoading,
     error,
+    refetch,
   } = useContractEvents({
     contract: transportTrackerContract,
     events: [journeyCompletedEvent],
   });
+  // // Polling untuk refetch setiap 5 detik
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     refetch();
+  //   }, 5000); // Refetch setiap 5 detik
+  //   return () => clearInterval(interval); // Bersihkan interval saat komponen di-unmount
+  // }, [refetch]);
 
-  if (isLoading) return <p className="text-center text-gray-300">Loading journey history...</p>;
+  if (isLoading)
+    return (
+      <div className="flex justify-center items-center min-h-screen   w-full">
+        <div className="text-center text-white">
+          <p>Loading journey history...</p>
+          <div className="animate-spin mt-4 w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full"></div>
+        </div>
+      </div>
+    );
   if (error) return <p className="text-red-400">Error loading events: {error.message}</p>;
 
   // Filter events based on the active user's address

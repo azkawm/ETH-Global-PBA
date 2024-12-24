@@ -25,7 +25,7 @@
     "react-qr-code": "^2.0.15",
     "react-qr-scanner": "^1.0.0-alpha.11",
     "tailwind-scrollbar": "^3.1.0",
-    "thirdweb": "^5.71.0",
+    "thirdweb": "^5.80.0",
     "three": "^0.170.0",
     "ws": "^8.18.0"
   },

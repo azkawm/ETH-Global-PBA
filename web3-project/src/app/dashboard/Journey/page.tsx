@@ -65,7 +65,7 @@ export default function JourneyPage() {
 
       {/* Main content */}
       <div className="relative z-10 flex flex-col items-center justify-center w-full px-4 max-w-7xl mx-auto">
-        <h1 className="text-3xl md:text-4xl font-extrabold text-center mb-8 md:mb-12 mt-4 drop-shadow-lg">Manage Your Journey</h1>
+        <h1 className="text-4xl md:text-4xl font-extrabold text-center mb-8 md:mb-12 mt-4 drop-shadow-lg">Manage Your Journey</h1>
 
         <div className="flex flex-col lg:flex-row gap-6 md:gap-8 justify-center w-full">
           {/* Left Section */}
