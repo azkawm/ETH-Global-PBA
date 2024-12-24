@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import ReactDOM from "react-dom";
+import { useEffect, useState } from "react";
 import { prepareContractCall } from "thirdweb";
 import { useSendTransaction, useReadContract } from "thirdweb/react";
 import { transportTrackerContract } from "../../client";
 import { useActiveAccount } from "thirdweb/react";
-import { XCircle } from "lucide-react"; // Import icon Close dari React Lucide
+import { XCircle } from "lucide-react";
 
 export default function WithdrawCarbonTokenModal({ onClose }: { onClose: () => void }) {
   const { mutate: sendTransaction } = useSendTransaction();
@@ -56,9 +57,15 @@ export default function WithdrawCarbonTokenModal({ onClose }: { onClose: () => v
     }
   };
 
-  return (
+  useEffect(() => {
+    document.body.style.overflow = "hidden"; // Nonaktifkan scroll halaman saat modal terbuka
+    return () => {
+      document.body.style.overflow = ""; // Reset saat modal ditutup
+    };
+  }, []);
+
+  return ReactDOM.createPortal(
     <div className="fixed inset-0 flex items-center justify-center bg-black/70 backdrop-blur-md z-50">
-      {/* Modal Container */}
       <div className="relative bg-gray-900/80 border border-gray-700/50 backdrop-blur-lg p-8 rounded-2xl shadow-2xl max-w-lg w-full">
         {/* Tombol Close */}
         <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-red-400 transition-all duration-300">
@@ -85,7 +92,10 @@ export default function WithdrawCarbonTokenModal({ onClose }: { onClose: () => v
             className="w-full px-4 py-3 rounded-lg bg-gray-800 text-gray-200 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-400"
             placeholder="Amount to withdraw"
             value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+            onChange={(e) => {
+              const value = Number(e.target.value);
+              setAmount(value >= 0 ? value.toString() : "0");
+            }}
             disabled={isLoading}
           />
         </div>
@@ -102,6 +112,7 @@ export default function WithdrawCarbonTokenModal({ onClose }: { onClose: () => v
         {/* Status */}
         {status && <p className="mt-4 text-center text-sm text-gray-300">{status}</p>}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

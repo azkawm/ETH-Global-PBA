@@ -29,24 +29,24 @@ export default function MarketplaceItemList() {
   const { data: item1Data, isLoading: isLoading1 } = useReadContract({
     contract: marketplaceContract,
     method: "function itemLists(uint256) view returns (uint256, string, uint256, uint256, address, address, bool)",
-    params: [BigInt(1)],
+    params: [BigInt(4)],
   });
   const { data: item2Data, isLoading: isLoading2 } = useReadContract({
     contract: marketplaceContract,
     method: "function itemLists(uint256) view returns (uint256, string, uint256, uint256, address, address, bool)",
-    params: [BigInt(2)],
+    params: [BigInt(5)],
   });
 
   const { data: item3Data, isLoading: isLoading3 } = useReadContract({
     contract: marketplaceContract,
     method: "function itemLists(uint256) view returns (uint256, string, uint256, uint256, address, address, bool)",
-    params: [BigInt(3)],
+    params: [BigInt(6)],
   });
 
   const { data: item4Data, isLoading: isLoading4 } = useReadContract({
     contract: marketplaceContract,
     method: "function itemLists(uint256) view returns (uint256, string, uint256, uint256, address, address, bool)",
-    params: [BigInt(4)],
+    params: [BigInt(7)],
   });
 
   useEffect(() => {
@@ -130,7 +130,15 @@ export default function MarketplaceItemList() {
     }
   };
 
-  if (isLoading) return <p className="text-center text-gray-300">Loading items...</p>;
+  if (isLoading)
+    return (
+      <div className="flex justify-center items-center min-h-screen   w-full">
+        <div className="text-center text-white">
+          <p>Loading Items...</p>
+          <div className="animate-spin mt-4 w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full"></div>
+        </div>
+      </div>
+    );
 
   return (
     <div className="container mx-auto px-6 py-8">

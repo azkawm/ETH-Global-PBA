@@ -22,7 +22,7 @@ export default function StartJourney({ onJourneyStarted, onCancel }: StartJourne
   const lastScanTimeRef = useRef<number>(0);
   const isProcessingRef = useRef<boolean>(false);
 
-  const SCAN_COOLDOWN = 5000; // 5 seconds cooldown between scans
+  const SCAN_COOLDOWN = 2000; // 5 seconds cooldown between scans
 
   const handleScan = async (result: any) => {
     if (result?.text && !isProcessingRef.current) {
@@ -33,7 +33,11 @@ export default function StartJourney({ onJourneyStarted, onCancel }: StartJourne
       if (scannedData !== lastScannedDataRef.current && currentTime - lastScanTimeRef.current > SCAN_COOLDOWN) {
         lastScannedDataRef.current = scannedData;
         lastScanTimeRef.current = currentTime;
-        await processTransaction(scannedData);
+        try {
+          await processTransaction(scannedData);
+        } catch {
+          isProcessingRef.current = false;
+        }
       }
     }
   };
@@ -55,6 +59,7 @@ export default function StartJourney({ onJourneyStarted, onCancel }: StartJourne
 
       sendTransaction(transaction, {
         onSuccess: () => {
+          setEntryStation(scannedData);
           setStatusMessage("Journey started successfully!");
           setTimeout(() => {
             onJourneyStarted();
@@ -91,15 +96,16 @@ export default function StartJourney({ onJourneyStarted, onCancel }: StartJourne
         </button>
       </div>
 
-      {showScanner && (
-        <div className="mb-4">
-          <QrScanner
-            delay={300} // Delay untuk scanning
-            onScan={handleScan} // Fungsi yang dipanggil saat QR Code berhasil di-scan
-            onError={(error) => console.error(error)} // Error handling
-            style={{ width: "100%" }} // Gaya untuk scanner
-          />
-        </div>
+      {showScanner && !isLoading && (
+        <QrScanner
+          delay={300}
+          onScan={handleScan}
+          onError={(error) => {
+            console.error(error);
+            setStatusMessage("Error scanning QR code. Please try again.");
+          }}
+          style={{ width: "100%" }}
+        />
       )}
 
       {entryStation && (

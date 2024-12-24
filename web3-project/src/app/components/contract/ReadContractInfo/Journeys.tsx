@@ -1,4 +1,5 @@
 "use client";
+import { useState, useEffect } from "react";
 import { useReadContract } from "thirdweb/react";
 import { transportTrackerContract } from "../../../client";
 import { calculateDistance } from "../../../utils/distanceCalculator";
@@ -21,17 +22,30 @@ export default function JourneyProgress({ userAddress }: { userAddress: string }
     method: "function rewardPerUnit() view returns (uint256)",
     params: [],
   });
+  const [cachedJourneyData, setCachedJourneyData] = useState<readonly [string, string, boolean, boolean] | null>(null);
+  useEffect(() => {
+    if (journeyData) {
+      setCachedJourneyData(journeyData); // Cache data setelah pembacaan
+    }
+  }, [journeyData]);
 
   if (journeyLoading || rewardLoading) return <p className="text-center text-gray-300">Loading journey data...</p>;
   if (journeyError) return <p className="text-center text-red-500">Error fetching journey data: {journeyError.message}</p>;
   if (!journeyData) return <p className="text-center text-gray-400">No journey data available</p>;
-
+  if (!cachedJourneyData) return <p>No journey data available</p>;
   const journey = {
     entryStation: journeyData[0] as string,
     exitStation: journeyData[1] as string,
-    isCompleted: Boolean(Number(journeyData[2])),
-    isOnWay: Boolean(Number(journeyData[3])),
+    isCompleted: Boolean(journeyData[2]),
+    isOnWay: Boolean(journeyData[3]),
   };
+  console.log("Raw contract data:", {
+    entryStation: journeyData[0],
+    exitStation: journeyData[1],
+    isCompleted: journeyData[2],
+    isOnWay: journeyData[3],
+  });
+  console.log("Journey data raw:", journeyData);
 
   const distance = calculateDistance(journey.entryStation, journey.exitStation);
   const rewardInWei = journey.isCompleted ? BigInt(distance) * (rewardPerUnit as bigint) : BigInt(0);
@@ -53,16 +67,18 @@ export default function JourneyProgress({ userAddress }: { userAddress: string }
             <div className="space-y-2 text-gray-300">
               <p className="flex items-center gap-2">
                 <MapPin className="text-green-400" />
-                <strong>From:</strong> {journey.entryStation}
+                <strong>From :</strong> {journey.entryStation}
               </p>
               <p className="flex items-center gap-2">
                 <ArrowRight className="text-yellow-400" />
-                <strong>To:</strong> {journey.exitStation}
+                <strong>To :</strong> {journey.exitStation}
               </p>
               <p className="flex items-center gap-2">
-                <strong>Distance:</strong> {distance} units
+                <strong>Distance :</strong> {distance} units
               </p>
-              <p className="text-yellow-400 font-bold text-lg">Reward Earned: {rewardInEther.toFixed(0)} Milez</p>
+              <p className="text-yellow-400 font-bold text-lg">
+                <strong>Reward Earned :</strong> {rewardInEther.toFixed(0)} Milez
+              </p>
             </div>
           </div>
         </div>
@@ -74,8 +90,9 @@ export default function JourneyProgress({ userAddress }: { userAddress: string }
           </div>
           <div className="bg-gray-900/80 p-6 rounded-lg shadow-lg">
             <p className="text-xl font-semibold text-blue-400 mb-2">Current Journey</p>
-            <p className="text-gray-300">
-              <strong>From:</strong> {journey.entryStation}
+            <p className="text-gray-300 flex items">
+              <MapPin className="text-green-400" />
+              <strong>&nbsp;From :&nbsp;</strong> {journey.entryStation}
             </p>
           </div>
         </div>
